@@ -1,4 +1,4 @@
-Firecards
+FireCards
 =========
 
 A party game for horrible people. Powered by Firebase.

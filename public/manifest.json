@@ -1,6 +1,6 @@
 {
-  "short_name": "Firecards",
-  "name": "Firecards",
+  "short_name": "FireCards",
+  "name": "FireCards",
   "icons": [
     {
       "src": "./static/images/icons/icon-192x192.png",
