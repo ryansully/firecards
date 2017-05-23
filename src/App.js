@@ -10,7 +10,8 @@ class App extends Component {
           <h2>FireCards</h2>
         </header>
         <p className="intro">
-          A party game for horrible people, powered by Firebase.
+          A party game for horrible people,
+            powered by <a href="https://firebase.google.com" target="_blank" rel="noopener noreferrer">Firebase</a>.
         </p>
       </div>
     )
