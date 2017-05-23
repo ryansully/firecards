@@ -15,7 +15,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "test:coverage": "npm test -- --coverage"
+    "test:coverage": "npm test -- --coverage",
+    "deploy": "npm run test:coverage && npm run build && firebase deploy"
   },
   "author": "Ryan Sullivan <ryan@ryansully.com>",
   "jest": {
