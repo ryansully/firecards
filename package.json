@@ -21,6 +21,13 @@
     "deploy": "npm run test:coverage && npm run build && firebase deploy"
   },
   "author": "Ryan Sullivan <ryan@ryansully.com>",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ryansully/firecards.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryansully/firecards/issues"
+  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
