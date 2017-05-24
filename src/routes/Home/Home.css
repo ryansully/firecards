@@ -1,0 +1,24 @@
+.Home {
+  text-align: center;
+}
+
+.Home .logo {
+  animation: Home-logo-flip infinite 10s linear;
+  height: 80px;
+}
+
+.Home header {
+  background-color: #999;
+  height: 150px;
+  padding: 20px;
+  color: #000;
+}
+
+.Home .intro {
+  font-size: large;
+}
+
+@keyframes Home-logo-flip {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
