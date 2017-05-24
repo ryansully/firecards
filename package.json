@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "firebase-tools": "^3.9.0",
-    "react-scripts": "1.0.3"
+    "react-scripts": "1.0.6"
   },
   "scripts": {
     "start": "react-scripts start",
