@@ -19,7 +19,7 @@
     "eject": "react-scripts eject",
     "test:coverage": "npm test -- --coverage",
     "postinstall": "firebase login && firebase use --add && node ./postinstall.js",
-    "deploy": "npm run test:coverage && npm run build && firebase deploy"
+    "deploy": "npm run build && firebase deploy"
   },
   "author": "Ryan Sullivan <ryan@ryansully.com>",
   "repository": {
