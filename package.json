@@ -14,8 +14,10 @@
     "redux-saga": "^0.15.3"
   },
   "devDependencies": {
+    "enzyme": "^2.8.2",
     "firebase-tools": "^3.9.0",
-    "react-scripts": "1.0.6"
+    "react-scripts": "1.0.6",
+    "react-test-renderer": "^15.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
