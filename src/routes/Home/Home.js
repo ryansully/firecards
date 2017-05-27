@@ -1,4 +1,6 @@
 import React from 'react'
+import { ui, uiConfig } from '../../firebase'
+import FirebaseUIAuth from '../../components/FirebaseUIAuth'
 import './Home.css'
 
 const Home = () => {
@@ -10,8 +12,9 @@ const Home = () => {
       </header>
       <p className="intro">
         A party game for horrible people,
-            powered by <a href="https://firebase.google.com" target="_blank" rel="noopener noreferrer">Firebase</a>.
-        </p>
+          powered by <a href="https://firebase.google.com" target="_blank" rel="noopener noreferrer">Firebase</a>.
+      </p>
+      <FirebaseUIAuth ui={ui} {...uiConfig} />
     </div>
   )
 }

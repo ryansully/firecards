@@ -1,6 +1,5 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import 'firebase/database'
+import firebase from 'firebase'
+import * as firebaseui from 'firebaseui'
 
 export const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -12,5 +11,17 @@ export const config = {
 }
 
 export const app = firebase.initializeApp(config)
-
+export const ui = new firebaseui.auth.AuthUI(firebase.auth())
 export default firebase
+
+export const uiConfig = {
+  callbacks: {
+    signInSuccess: (currentUser, credential, redirectUrl) => {
+      // Do not redirect.
+      return false;
+    }
+  },
+  signInOptions: [
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID
+  ]
+}
