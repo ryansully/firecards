@@ -4,5 +4,17 @@ import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import './index.css'
 
-ReactDOM.render(<App />, document.getElementById('root'))
+import { Provider } from 'react-redux'
+import configureStore from './store'
+import rootSaga from './sagas'
+
+const store = configureStore()
+store.runSaga(rootSaga)
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+)
 registerServiceWorker()
