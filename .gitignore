@@ -23,3 +23,10 @@ yarn-error.log*
 # Firebase
 .firebaserc
 firebase-debug.log*
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
