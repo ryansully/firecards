@@ -1,22 +1,39 @@
 import React from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { actions as authActions } from '../../auth/dux'
 import { ui, uiConfig } from '../../firebase'
-import FirebaseUIAuth from '../../components/FirebaseUIAuth'
+import { Dashboard, FirebaseUIAuth } from '../../components'
 import './Home.css'
 
-const Home = () => {
+export const Home = ({ user }) => {
   return (
     <div className="Home">
-      <header>
-        <img src={process.env.PUBLIC_URL + '/static/images/icons/icon-192x192.png'} alt="logo" className="logo" />
-        <h2>FireCards</h2>
-      </header>
-      <p className="intro">
-        A party game for horrible people,
-          powered by <a href="https://firebase.google.com" target="_blank" rel="noopener noreferrer">Firebase</a>.
-      </p>
-      <FirebaseUIAuth ui={ui} {...uiConfig} />
+      {user ? (
+        <Dashboard />
+      ) : (
+        <div>
+          <header>
+            <img src={process.env.PUBLIC_URL + '/static/images/icons/icon-192x192.png'} alt="logo" className="logo" />
+            <h2>FireCards</h2>
+          </header>
+          <p className="intro">
+            A party game for horrible people,
+              powered by <a href="https://firebase.google.com" target="_blank" rel="noopener noreferrer">Firebase</a>.
+          </p>
+          <FirebaseUIAuth ui={ui} {...uiConfig} />
+        </div>
+      )}
     </div>
   )
 }
 
-export default Home
+const mapStateToProps = (state) => ({
+  user: state.auth.user
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators(authActions, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
