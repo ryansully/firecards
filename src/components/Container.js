@@ -1,4 +1,5 @@
 import React from 'react'
+import { Container as UIContainer } from 'semantic-ui-react'
 import Navigation from './Navigation/Navigation'
 
 const Container = ({ children }) => {
@@ -6,7 +7,9 @@ const Container = ({ children }) => {
   return (
     <div className="Container">
       <Navigation activeItem={childComponentName} />
-      {children}
+      <UIContainer>
+        <div>{children}</div>
+      </UIContainer>
     </div>
   )
 }
