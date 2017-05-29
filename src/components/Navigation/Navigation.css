@@ -1,0 +1,5 @@
+.Navigation .header .image,
+.Navigation .user:hover .avatar,
+.Navigation .user.active .avatar {
+  filter: drop-shadow(0 0 2px #fff);
+}
