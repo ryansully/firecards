@@ -1,8 +1,9 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { actions as authActions } from '../../auth/dux'
+import { NavLink } from 'react-router-dom'
 import { Dropdown, Image, Menu } from 'semantic-ui-react'
+import { actions as authActions } from '../../auth/dux'
 import './Navigation.css'
 
 export const Navigation = (props) => {
@@ -11,7 +12,7 @@ export const Navigation = (props) => {
       <Menu.Item header>
         <Image src={process.env.PUBLIC_URL + '/static/images/icons/icon-192x192.png'} size="mini" />
       </Menu.Item>
-      <Menu.Item href="/dashboard" active={props.activeItem === 'Dashboard'}>Dashboard</Menu.Item>
+      <Menu.Item as={NavLink} exact to="/">Dashboard</Menu.Item>
       <Menu.Menu position="right">
         <Dropdown item trigger={<Image src={props.user.photoURL} avatar />} className="user">
           <Dropdown.Menu>
