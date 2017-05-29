@@ -1,23 +1,15 @@
 import React from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { actions as authActions } from '../auth/dux'
+import { Button, Container, Header } from 'semantic-ui-react'
 
-export const Dashboard = ({ signOutRequest }) => {
+const Dashboard = () => {
   return (
     <div className="Dashboard">
-      <h3>Dashboard</h3>
-      <button onClick={signOutRequest}>Sign Out</button>
+      <Container>
+        <Header as="h2" icon="gamepad" content="Games" />
+        <Button>New Game</Button>
+      </Container>
     </div>
   )
 }
 
-const mapStateToProps = (state) => ({
-  user: state.auth.user
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators(authActions, dispatch)
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
+export default Dashboard

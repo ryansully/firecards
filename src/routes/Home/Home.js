@@ -3,16 +3,18 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { actions as authActions } from '../../auth/dux'
 import { ui, uiConfig } from '../../firebase'
-import { Dashboard, FirebaseUIAuth } from '../../components'
+import { Container, Dashboard, FirebaseUIAuth } from '../../components'
 import './Home.css'
 
 export const Home = ({ user }) => {
   return (
     <div className="Home">
       {user ? (
-        <Dashboard />
+        <Container>
+          <Dashboard />
+        </Container>
       ) : (
-        <div>
+        <div className="landing">
           <header>
             <img src={process.env.PUBLIC_URL + '/static/images/icons/icon-192x192.png'} alt="logo" className="logo" />
             <h2>FireCards</h2>
