@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import auth from './auth'
 import { actions as authActions } from './auth/dux'
-import { Home } from './routes'
+import { Home, NewGame } from './routes'
 
 import './App.css'
 
@@ -30,6 +30,7 @@ export class App extends Component {
       <Router>
         <div className="App">
           <Route exact path="/" component={Home} />
+          <Route exact path="/game/new" component={NewGame} />
         </div>
       </Router>
     )
