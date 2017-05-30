@@ -6,7 +6,7 @@ const chalk = require('chalk')
 const CAMEL_CASE_REGEXP = /([a-z0-9])([A-Z])/g
 const writePath = '.env.local'
 
-module.exports = () => {
+function main() {
   console.log(chalk.white(`Writing Firebase app configuration environment variables to ${writePath}...`))
 
   client.setup.web().then((data) => {
@@ -21,3 +21,6 @@ module.exports = () => {
     })
   })
 }
+
+module.exports = main
+if (require.main === module) { main() }
