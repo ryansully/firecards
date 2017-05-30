@@ -2,11 +2,10 @@ import React from 'react'
 import { Container as UIContainer } from 'semantic-ui-react'
 import Navigation from './Navigation/Navigation'
 
-const Container = ({ children }) => {
-  const childComponentName = children.type.WrappedComponent ? children.type.WrappedComponent.name : children.type.name
+const Container = ({ children, activeNavItem }) => {
   return (
     <div className="Container">
-      <Navigation activeItem={childComponentName} />
+      <Navigation />
       <UIContainer>
         <div>{children}</div>
       </UIContainer>
