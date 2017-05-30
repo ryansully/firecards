@@ -1,1 +1,2 @@
+require('./importDecks')()
 require('./writeEnv')()
