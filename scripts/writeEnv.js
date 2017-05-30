@@ -17,7 +17,7 @@ function main() {
         stream.write(varString)
       }
       stream.end()
-      console.log(chalk.white(`Installation complete!`))
+      console.log(chalk.white(`${writePath} saved`))
     })
   })
 }

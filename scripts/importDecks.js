@@ -1,5 +1,6 @@
 // import decks to Firebase database
 const async = require('async')
+const chalk = require('chalk')
 const exec = require('child_process').exec
 const fs = require('fs')
 const path = require('path')
@@ -13,10 +14,10 @@ function main() {
       const dbPath = `${deckPath}/${path.basename(file, '.json')}`
       const infile = `${dirPath}/${file}`
       const command = `firebase database:set -j -y ${dbPath} ${infile}`
-      console.log(`Importing ${infile}...`)
+      console.log(chalk.white(`Importing ${infile}...`))
       exec(command, (error, stdout, stderr) => {
         if (stdout) {
-          console.log(JSON.parse(stdout).status)
+          console.log(chalk.white(`${file}: ${JSON.parse(stdout).status}`))
         }
       })
     }))
