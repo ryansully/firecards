@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container as UIContainer } from 'semantic-ui-react'
-import Navigation from './Navigation/Navigation'
+import Navigation from '../Navigation/Navigation'
 
 const Container = ({ children, activeNavItem }) => {
   return (
