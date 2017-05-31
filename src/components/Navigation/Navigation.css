@@ -1,3 +1,7 @@
+.Navigation.ui.attached.menu {
+  border-radius: 0;
+}
+
 .Navigation .header .image,
 .Navigation .user:hover .avatar,
 .Navigation .user.active .avatar {
