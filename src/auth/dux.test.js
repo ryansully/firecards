@@ -1,9 +1,7 @@
-import reducer, { actions, ActionTypes } from './dux'
+import reducer, { actions, ActionTypes, initialState } from './dux'
 
 it('returns the initial state', () => {
-  expect(reducer(undefined, {})).toEqual({
-    user: null
-  })
+  expect(reducer(undefined, {})).toEqual(initialState)
 })
 
 it('creates actions to authenticate a user', () => {

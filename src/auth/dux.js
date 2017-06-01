@@ -14,7 +14,7 @@ export const actions = {
   signOutSuccess: () => ({type: ActionTypes.SIGN_OUT_SUCCESS}),
 }
 
-const initialState = {
+export const initialState = {
   user: getAuthUserFromLocalStorage()
 }
 
