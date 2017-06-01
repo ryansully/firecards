@@ -3,7 +3,7 @@ import { auth } from '../firebase'
 import { actions, ActionTypes } from './dux'
 import root, { authUser, signOut } from './sagas'
 
-describe('authUser saga', function () {
+describe('authUser saga', () => {
   const user = {name: 'test'}
   const generator = authUser()
 
@@ -16,7 +16,7 @@ describe('authUser saga', function () {
   })
 })
 
-describe('signOut saga', function () {
+describe('signOut saga', () => {
   const generator = signOut()
 
   it('waits for sign out requests', () => {
@@ -32,7 +32,7 @@ describe('signOut saga', function () {
   })
 })
 
-describe('root saga', function () {
+describe('root saga', () => {
   const generator = root()
 
   it('yields an array of sagas', () => {
