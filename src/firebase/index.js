@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import * as firebaseui from 'firebaseui'
+export { default as FirebaseSagaHelper } from './FirebaseSagaHelper'
 
 export const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -20,7 +21,7 @@ export const uiConfig = {
   callbacks: {
     signInSuccess: (currentUser, credential, redirectUrl) => {
       // Do not redirect.
-      return false;
+      return false
     }
   },
   signInOptions: [
