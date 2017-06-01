@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import auth from './auth'
+import { auth } from './firebase'
 import { actions as authActions } from './auth/dux'
 import { Home, NewGame } from './routes'
 

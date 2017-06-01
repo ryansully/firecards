@@ -11,7 +11,9 @@ export const config = {
 }
 
 export const app = firebase.initializeApp(config)
-export const ui = new firebaseui.auth.AuthUI(firebase.auth())
+export const auth = firebase.auth()
+export const database = firebase.database()
+export const ui = new firebaseui.auth.AuthUI(auth)
 export default firebase
 
 export const uiConfig = {
@@ -24,4 +26,13 @@ export const uiConfig = {
   signInOptions: [
     firebase.auth.GoogleAuthProvider.PROVIDER_ID
   ]
+}
+
+export function getAuthUserFromLocalStorage() {
+  for (let key in localStorage) {
+    if (key.startsWith('firebase:authUser:')) {
+      return JSON.parse(localStorage[key])
+    }
+  }
+  return null
 }

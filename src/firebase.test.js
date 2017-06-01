@@ -1,12 +1,12 @@
-import * as auth from './index'
+import { getAuthUserFromLocalStorage } from './firebase'
 
 it('returns null from local storage if there is no authenticated user', () => {
-  const empty = auth.getUserFromLocalStorage()
+  const empty = getAuthUserFromLocalStorage()
   expect(empty).toBeNull()
 })
 
 it('returns a user from local storage', () => {
   localStorage['firebase:authUser:'] = '{"user": "test"}'
-  const user = auth.getUserFromLocalStorage()
+  const user = getAuthUserFromLocalStorage()
   expect(user.user).toEqual('test')
 })

@@ -1,5 +1,5 @@
 import { all, call, fork, put, take } from 'redux-saga/effects'
-import auth from './index'
+import { auth } from '../firebase'
 import { actions, ActionTypes } from './dux'
 import root, { authUser, signOut } from './sagas'
 

@@ -1,4 +1,4 @@
-import { getUserFromLocalStorage } from './index'
+import { getAuthUserFromLocalStorage } from '../firebase'
 
 export const ActionTypes = {
   AUTH_USER_REQUEST: 'auth/AUTH_USER_REQUEST',
@@ -15,7 +15,7 @@ export const actions = {
 }
 
 const initialState = {
-  user: getUserFromLocalStorage()
+  user: getAuthUserFromLocalStorage()
 }
 
 export default function reducer(state = initialState, action) {
