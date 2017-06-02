@@ -27,7 +27,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "test:coverage": "npm test -- --coverage",
-    "postinstall": "firebase login && firebase use --add && node ./scripts/postinstall.js",
+    "postinstall": "node ./scripts/postinstall.js",
     "deploy": "npm run build && firebase deploy"
   },
   "author": "Ryan Sullivan <ryan@ryansully.com>",
