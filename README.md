@@ -1,4 +1,4 @@
-# FireCards [![codecov](https://codecov.io/gh/ryansully/firecards/branch/master/graph/badge.svg)](https://codecov.io/gh/ryansully/firecards)
+# FireCards [![Build Status](https://travis-ci.org/ryansully/firecards.svg?branch=master)](https://travis-ci.org/ryansully/firecards) [![codecov](https://codecov.io/gh/ryansully/firecards/branch/master/graph/badge.svg)](https://codecov.io/gh/ryansully/firecards)
 
 A party game for horrible people,
 powered by [Firebase](https://firebase.google.com).
