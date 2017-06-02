@@ -1,13 +1,10 @@
 // don't run postinstall in CI
-(process.env.CI === true) && process.exit(0)
+process.env.CI && process.exit()
 
-const async = require('async')
-const exec = require('child_process').exec
+const execSync = require('child_process').execSync
+const execSyncOptions = { stdio: 'inherit' }
 
-async.series([
-  async.apply(exec, 'firebase login'),
-  async.apply(exec, 'firebase use --add')
-])
-
+execSync('firebase login', execSyncOptions)
+execSync('firebase use --add', execSyncOptions)
 require('./importDecks')()
 require('./writeEnv')()
