@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { auth } from './firebase'
-import { actions as authActions } from './auth/dux'
+import { actions as authActions, selectors as authSelectors } from './auth/dux'
 import { Home, NewGame } from './routes'
 
 import './App.css'
@@ -38,7 +38,7 @@ export class App extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.auth.user
+  user: authSelectors.getUser(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({

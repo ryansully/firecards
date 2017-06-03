@@ -14,6 +14,10 @@ export const actions = {
   signOutSuccess: () => ({type: ActionTypes.SIGN_OUT_SUCCESS}),
 }
 
+export const selectors = {
+  getUser: (state) => state.auth.user
+}
+
 export const initialState = {
   user: getAuthUserFromLocalStorage()
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { actions as authActions } from '../../auth/dux'
+import { actions as authActions, selectors as authSelectors } from '../../auth/dux'
 import { ui, uiConfig } from '../../firebase'
 import { Container, Dashboard, FirebaseUIAuth } from '../../components'
 import './Home.css'
@@ -31,7 +31,7 @@ export const Home = ({ user }) => {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.auth.user
+  user: authSelectors.getUser(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({

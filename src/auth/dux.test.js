@@ -1,8 +1,4 @@
-import reducer, { actions, ActionTypes, initialState } from './dux'
-
-it('returns the initial state', () => {
-  expect(reducer(undefined, {})).toEqual(initialState)
-})
+import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
 it('creates actions to authenticate a user', () => {
   expect(actions.authUserRequest({
@@ -26,6 +22,14 @@ it('creates actions to sign out a user', () => {
   expect(actions.signOutSuccess()).toEqual({
     type: ActionTypes.SIGN_OUT_SUCCESS
   })
+})
+
+it('selects user from state', () => {
+  expect(selectors.getUser({auth: initialState})).toEqual(null)
+})
+
+it('returns the initial state', () => {
+  expect(reducer(undefined, {})).toEqual(initialState)
 })
 
 it('handles AUTH_USER action', () => {

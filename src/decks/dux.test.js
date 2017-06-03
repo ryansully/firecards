@@ -1,8 +1,4 @@
-import reducer, { actions, ActionTypes, initialState } from './dux'
-
-it('returns the initial state', () => {
-  expect(reducer(undefined, {})).toEqual(initialState)
-})
+import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
 it('creates an action to get the deck index', () => {
   expect(actions.getDeckIndex()).toEqual({
@@ -31,6 +27,22 @@ it('creates an action to store the deck order', () => {
     type: ActionTypes.STORE_DECK_ORDER,
     deckOrder: ['test1', 'test2']
   })
+})
+
+it('selects deck list from state', () => {
+  expect(selectors.getDeckList({decks: initialState})).toEqual(null)
+})
+
+it('selects deck order from state', () => {
+  expect(selectors.getDeckOrder({decks: initialState})).toEqual(null)
+})
+
+it('selects selected decks from state', () => {
+  expect(selectors.getSelectedDecks({decks: initialState})).toEqual(['Base'])
+})
+
+it('returns the initial state', () => {
+  expect(reducer(undefined, {})).toEqual(initialState)
 })
 
 it('handles SET_SELECTED_DECKS action', () => {

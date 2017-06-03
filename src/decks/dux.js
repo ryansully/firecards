@@ -12,6 +12,12 @@ export const actions = {
   storeDeckOrder: (deckOrder) => ({type: ActionTypes.STORE_DECK_ORDER, deckOrder}),
 }
 
+export const selectors = {
+  getDeckList: (state) => state.decks.deckList,
+  getDeckOrder: (state) => state.decks.deckOrder,
+  getSelectedDecks: (state) => state.decks.selectedDecks,
+}
+
 export const initialState = {
   deckList: null,
   deckOrder: null,

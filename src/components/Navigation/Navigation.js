@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 import { Dropdown, Image, Menu } from 'semantic-ui-react'
-import { actions as authActions } from '../../auth/dux'
+import { actions as authActions, selectors as authSelectors } from '../../auth/dux'
 import './Navigation.css'
 
 export const Navigation = (props) => {
@@ -26,7 +26,7 @@ export const Navigation = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.auth.user
+  user: authSelectors.getUser(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({
