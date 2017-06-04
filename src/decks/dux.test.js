@@ -37,6 +37,15 @@ it('selects deck order from state', () => {
   expect(selectors.getDeckOrder({decks: initialState})).toEqual(null)
 })
 
+it('selects official decks from state', () => {
+  const officialDecks = selectors.getOfficialDecks({decks: {
+    deckList: {deck1: {name: 'deck1'}, '[': {name: '['}},
+    deckOrder: ['deck1', '[']
+  }})
+  expect(officialDecks.length).toEqual(1)
+  expect(officialDecks[0]).toEqual('deck1')
+})
+
 it('selects selected decks from state', () => {
   expect(selectors.getSelectedDecks({decks: initialState})).toEqual(['Base'])
 })
