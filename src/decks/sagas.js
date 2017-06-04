@@ -6,7 +6,7 @@ const helper = new FirebaseSagaHelper(app)
 
 export function* getDeckIndex() {
   while (true) {
-    yield take(ActionTypes.GET_DECK_INDEX)
+    yield take(ActionTypes.DECK_INDEX_REQUEST)
     const deckIndex = yield call(helper.get, '/decks/!index')
     const { '!order': deckOrder, ...deckList } = deckIndex
     yield put(actions.storeDeckList(deckList))

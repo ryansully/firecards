@@ -1,8 +1,8 @@
 import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
-it('creates an action to get the deck index', () => {
-  expect(actions.getDeckIndex()).toEqual({
-    type: ActionTypes.GET_DECK_INDEX
+it('creates an action to fetch the deck index', () => {
+  expect(actions.fetchDeckIndex()).toEqual({
+    type: ActionTypes.DECK_INDEX_REQUEST
   })
 })
 

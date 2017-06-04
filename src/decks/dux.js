@@ -1,12 +1,12 @@
 export const ActionTypes = {
-  GET_DECK_INDEX: 'decks/GET_DECK_INDEX',
+  DECK_INDEX_REQUEST: 'decks/DECK_INDEX_REQUEST',
   SET_SELECTED_DECKS: 'decks/SET_SELECTED_DECKS',
   STORE_DECK_LIST: 'decks/STORE_DECK_LIST',
   STORE_DECK_ORDER: 'decks/STORE_DECK_ORDER',
 }
 
 export const actions = {
-  getDeckIndex: () => ({type: ActionTypes.GET_DECK_INDEX}),
+  fetchDeckIndex: () => ({type: ActionTypes.DECK_INDEX_REQUEST}),
   setSelectedDecks: (selectedDecks) => ({type: ActionTypes.SET_SELECTED_DECKS, selectedDecks}),
   storeDeckList: (deckList) => ({type: ActionTypes.STORE_DECK_LIST, deckList}),
   storeDeckOrder: (deckOrder) => ({type: ActionTypes.STORE_DECK_ORDER, deckOrder}),

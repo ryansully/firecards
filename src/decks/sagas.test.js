@@ -7,7 +7,7 @@ describe('getDeckIndex saga', () => {
   const generator = getDeckIndex()
 
   it('waits for deck index requests', () => {
-    expect(generator.next().value).toEqual(take(ActionTypes.GET_DECK_INDEX))
+    expect(generator.next().value).toEqual(take(ActionTypes.DECK_INDEX_REQUEST))
   })
 
   it('gets a deck index from the database', () => {
