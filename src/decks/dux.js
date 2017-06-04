@@ -15,6 +15,8 @@ export const actions = {
 export const selectors = {
   getDeckList: (state) => state.decks.deckList,
   getDeckOrder: (state) => state.decks.deckOrder,
+  getOfficialDecks: (state) => (state.decks.deckOrder || [])
+    .filter((deck) => state.decks.deckList[deck].name[0] !== '['),
   getSelectedDecks: (state) => state.decks.selectedDecks,
 }
 
