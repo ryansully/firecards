@@ -3,16 +3,16 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { actions as authActions, selectors as authSelectors } from '../../auth/dux'
 import { ui, uiConfig } from '../../firebase'
-import { Container, Dashboard, FirebaseUIAuth } from '../../components'
+import { Dashboard, PageContainer, FirebaseUIAuth } from '../../components'
 import './Home.css'
 
 export const Home = ({ user }) => {
   return (
     <div className="Home">
       {user ? (
-        <Container>
+        <PageContainer>
           <Dashboard />
-        </Container>
+        </PageContainer>
       ) : (
         <div className="landing">
           <header>

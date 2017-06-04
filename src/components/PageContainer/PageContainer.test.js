@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import Container from './Container'
+import PageContainer from './PageContainer'
 
 it('renders without crashing', () => {
-  shallow(<Container />)
+  shallow(<PageContainer />)
 })
