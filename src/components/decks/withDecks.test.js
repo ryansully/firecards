@@ -3,13 +3,13 @@ import { Provider } from 'react-redux'
 import configureStore from 'redux-mock-store'
 import { shallow, mount } from 'enzyme'
 import withDecks from './withDecks'
-import { actions as decksActions } from '../../decks/dux'
+import { actions as decksActions, initialState } from '../../decks/dux'
 
 const mockStore = configureStore()
 let store
 
 beforeEach(() => {
-  store = mockStore({decks: {deckList: null}})
+  store = mockStore({decks: initialState})
 })
 
 it('renders without crashing', () => {
@@ -30,11 +30,11 @@ it('renders a wrapped component with props', () => {
 })
 
 it('dispatches a deck index request action when deckList is falsy', () => {
-  const PropsChecker = withDecks(props => null)
+  const WrappedComponent = withDecks(props => null)
 
   mount(
     <Provider store={store}>
-      <PropsChecker />
+      <WrappedComponent />
     </Provider>
   )
 
@@ -57,4 +57,18 @@ it('does not dispatch a deck index request action when deckList exists', () => {
   )
 
   expect(store.getActions().length).toEqual(0)
+})
+
+it('has areDecksSelected selector mapped to prop', () => {
+  const PropsChecker = withDecks((props) => {
+    expect(props.areDecksSelected(['deck1'])).toEqual(false)
+    expect(props.areDecksSelected(['Base'])).toEqual(true)
+    return null
+  })
+
+  mount(
+    <Provider store={store}>
+      <PropsChecker />
+    </Provider>
+  )
 })

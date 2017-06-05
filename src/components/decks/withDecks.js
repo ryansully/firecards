@@ -23,6 +23,7 @@ const withDecks = (WrappedComponent) => {
   }
 
   const mapStateToProps = (state) => ({
+    areDecksSelected: decks => decksSelectors.areDecksSelected(state, decks),
     deckList: decksSelectors.getDeckList(state),
     deckOrder: decksSelectors.getDeckOrder(state),
     officialDecks: decksSelectors.getOfficialDecks(state),
