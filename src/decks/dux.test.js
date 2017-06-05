@@ -29,6 +29,31 @@ it('creates an action to store the deck order', () => {
   })
 })
 
+it('creates an action to toggle all decks to be selected', () => {
+  expect(actions.toggleAllSelected(null, {checked: true})).toEqual({
+    type: ActionTypes.SELECT_ALL_TOGGLE,
+    checked: true
+  })
+})
+
+it('creates an action to toggle official decks to be selected', () => {
+  expect(actions.toggleOfficialSelected(null, {checked: true})).toEqual({
+    type: ActionTypes.SELECT_OFFICIAL_TOGGLE,
+    checked: true
+  })
+})
+
+it('creates an action to toggle a single deck to be selected', () => {
+  const data = {
+    checked: true,
+    value: 'test'
+  }
+  expect(actions.toggleSelectedDeck(null, data)).toEqual({
+    type: ActionTypes.SELECT_DECK_TOGGLE,
+    ...data
+  })
+})
+
 it('selects deck list from state', () => {
   expect(selectors.getDeckList({decks: initialState})).toEqual(null)
 })

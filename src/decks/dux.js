@@ -1,5 +1,8 @@
 export const ActionTypes = {
   DECK_INDEX_REQUEST: 'decks/DECK_INDEX_REQUEST',
+  SELECT_ALL_TOGGLE: 'decks/SELECT_ALL_TOGGLE',
+  SELECT_DECK_TOGGLE: 'decks/SELECT_DECK_TOGGLE',
+  SELECT_OFFICIAL_TOGGLE: 'decks/SELECT_OFFICIAL_TOGGLE',
   SET_SELECTED_DECKS: 'decks/SET_SELECTED_DECKS',
   STORE_DECK_LIST: 'decks/STORE_DECK_LIST',
   STORE_DECK_ORDER: 'decks/STORE_DECK_ORDER',
@@ -10,6 +13,9 @@ export const actions = {
   setSelectedDecks: (selectedDecks) => ({type: ActionTypes.SET_SELECTED_DECKS, selectedDecks}),
   storeDeckList: (deckList) => ({type: ActionTypes.STORE_DECK_LIST, deckList}),
   storeDeckOrder: (deckOrder) => ({type: ActionTypes.STORE_DECK_ORDER, deckOrder}),
+  toggleAllSelected: (event, data) => ({type: ActionTypes.SELECT_ALL_TOGGLE, checked: data.checked}),
+  toggleOfficialSelected: (event, data) => ({type: ActionTypes.SELECT_OFFICIAL_TOGGLE, checked: data.checked}),
+  toggleSelectedDeck: (event, data) => ({type: ActionTypes.SELECT_DECK_TOGGLE, checked: data.checked, value: data.value}),
 }
 
 export const selectors = {
