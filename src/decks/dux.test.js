@@ -54,6 +54,19 @@ it('creates an action to toggle a single deck to be selected', () => {
   })
 })
 
+it('checks if deck list matches selected decks', () => {
+  const state = {decks: {
+    selectedDecks: ['deck1', 'deck2']
+  }}
+  const trueDecks = ['deck1', 'deck2']
+  const lessDecks = ['deck1']
+  const differentDecks = ['deck3', 'deck4']
+
+  expect(selectors.areDecksSelected(state, trueDecks)).toEqual(true)
+  expect(selectors.areDecksSelected(state, lessDecks)).toEqual(false)
+  expect(selectors.areDecksSelected(state, differentDecks)).toEqual(false)
+})
+
 it('selects deck list from state', () => {
   expect(selectors.getDeckList({decks: initialState})).toEqual(null)
 })

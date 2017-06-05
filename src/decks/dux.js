@@ -19,6 +19,12 @@ export const actions = {
 }
 
 export const selectors = {
+  areDecksSelected: (state, decks) => {
+    const { selectedDecks } = state.decks
+    if (selectedDecks.length !== decks.length) { return false }
+    // this is O(n^2), but the arrays are small and fixed
+    return decks.every(deck => selectedDecks.includes(deck))
+  },
   getDeckList: (state) => state.decks.deckList,
   getDeckOrder: (state) => state.decks.deckOrder,
   getOfficialDecks: (state) => (state.decks.deckOrder || [])
