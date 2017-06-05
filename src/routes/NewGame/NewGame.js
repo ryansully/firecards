@@ -1,13 +1,19 @@
 import React from 'react'
-import { Header } from 'semantic-ui-react'
-import { PageContainer } from '../../components'
+import { Button, Header } from 'semantic-ui-react'
+import { DeckSelector, PageContainer, withDecks } from '../../components'
 
-const NewGame = () => {
+export const NewGame = (props) => {
   return (
-    <PageContainer className="NewGame">
-        <Header as="h2" icon="add" content="New Game" />
+    <PageContainer className="NewGame" loading={!(props.deckList && props.deckOrder)}>
+      <Header as="h2" icon="add" content="New Game" />
+      <DeckSelector {...props} submitButton={<Button content="Create Game" onClick={handleSubmit} />} />
     </PageContainer>
   )
 }
 
-export default NewGame
+export function handleSubmit(event) {
+  // event.preventDefault()
+  // TODO: dispatch action to create new game
+}
+
+export default withDecks(NewGame)
