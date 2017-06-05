@@ -4,7 +4,7 @@
   "description": "FireCards",
   "private": true,
   "dependencies": {
-    "firebase": "^4.0.0",
+    "firebase": "^4.1.1",
     "firebaseui": "^2.0.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
@@ -13,12 +13,12 @@
     "redux": "^3.6.0",
     "redux-saga": "^0.15.3",
     "semantic-ui-css": "^2.2.10",
-    "semantic-ui-react": "^0.68.4"
+    "semantic-ui-react": "^0.68.5"
   },
   "devDependencies": {
     "enzyme": "^2.8.2",
-    "firebase-tools": "^3.9.0",
-    "react-scripts": "1.0.6",
+    "firebase-tools": "^3.9.1",
+    "react-scripts": "1.0.7",
     "react-test-renderer": "^15.5.4",
     "redux-mock-store": "^1.2.3"
   },
