@@ -3,16 +3,16 @@ export const ActionTypes = {
   SELECT_ALL_TOGGLE: 'decks/SELECT_ALL_TOGGLE',
   SELECT_DECK_TOGGLE: 'decks/SELECT_DECK_TOGGLE',
   SELECT_OFFICIAL_TOGGLE: 'decks/SELECT_OFFICIAL_TOGGLE',
-  SET_SELECTED_DECKS: 'decks/SET_SELECTED_DECKS',
-  STORE_DECK_LIST: 'decks/STORE_DECK_LIST',
-  STORE_DECK_ORDER: 'decks/STORE_DECK_ORDER',
+  SELECTED_DECKS_SET: 'decks/SELECTED_DECKS_SET',
+  DECK_LIST_STORE: 'decks/DECK_LIST_STORE',
+  DECK_ORDER_STORE: 'decks/DECK_ORDER_STORE',
 }
 
 export const actions = {
   fetchDeckIndex: () => ({type: ActionTypes.DECK_INDEX_REQUEST}),
-  setSelectedDecks: (selectedDecks) => ({type: ActionTypes.SET_SELECTED_DECKS, selectedDecks}),
-  storeDeckList: (deckList) => ({type: ActionTypes.STORE_DECK_LIST, deckList}),
-  storeDeckOrder: (deckOrder) => ({type: ActionTypes.STORE_DECK_ORDER, deckOrder}),
+  setSelectedDecks: (selectedDecks) => ({type: ActionTypes.SELECTED_DECKS_SET, selectedDecks}),
+  storeDeckList: (deckList) => ({type: ActionTypes.DECK_LIST_STORE, deckList}),
+  storeDeckOrder: (deckOrder) => ({type: ActionTypes.DECK_ORDER_STORE, deckOrder}),
   toggleAllSelected: (event, data) => ({type: ActionTypes.SELECT_ALL_TOGGLE, checked: data.checked}),
   toggleOfficialSelected: (event, data) => ({type: ActionTypes.SELECT_OFFICIAL_TOGGLE, checked: data.checked}),
   toggleSelectedDeck: (event, data) => ({type: ActionTypes.SELECT_DECK_TOGGLE, checked: data.checked, value: data.value}),
@@ -40,17 +40,17 @@ export const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.SET_SELECTED_DECKS:
+    case ActionTypes.SELECTED_DECKS_SET:
       return {
         ...state,
         selectedDecks: action.selectedDecks
       }
-    case ActionTypes.STORE_DECK_LIST:
+    case ActionTypes.DECK_LIST_STORE:
       return {
         ...state,
         deckList: action.deckList
       }
-    case ActionTypes.STORE_DECK_ORDER:
+    case ActionTypes.DECK_ORDER_STORE:
       return {
         ...state,
         deckOrder: action.deckOrder

@@ -8,7 +8,7 @@ it('creates an action to fetch the deck index', () => {
 
 it('creates an action to set the selected decks', () => {
   expect(actions.setSelectedDecks(['test'])).toEqual({
-    type: ActionTypes.SET_SELECTED_DECKS,
+    type: ActionTypes.SELECTED_DECKS_SET,
     selectedDecks: ['test']
   })
 })
@@ -17,14 +17,14 @@ it('creates an action to store the deck list', () => {
   expect(actions.storeDeckList({
     name: 'test'
   })).toEqual({
-    type: ActionTypes.STORE_DECK_LIST,
+    type: ActionTypes.DECK_LIST_STORE,
     deckList: { name: 'test' }
   })
 })
 
 it('creates an action to store the deck order', () => {
   expect(actions.storeDeckOrder(['test1', 'test2'])).toEqual({
-    type: ActionTypes.STORE_DECK_ORDER,
+    type: ActionTypes.DECK_ORDER_STORE,
     deckOrder: ['test1', 'test2']
   })
 })
@@ -92,27 +92,27 @@ it('returns the initial state', () => {
   expect(reducer(undefined, {})).toEqual(initialState)
 })
 
-it('handles SET_SELECTED_DECKS action', () => {
+it('handles SELECTED_DECKS_SET action', () => {
   expect(reducer({}, {
-    type: ActionTypes.SET_SELECTED_DECKS,
+    type: ActionTypes.SELECTED_DECKS_SET,
     selectedDecks: ['test']
   })).toEqual({
     selectedDecks: ['test']
   })
 })
 
-it('handles STORE_DECK_LIST action', () => {
+it('handles DECK_LIST_STORE action', () => {
   expect(reducer({}, {
-    type: ActionTypes.STORE_DECK_LIST,
+    type: ActionTypes.DECK_LIST_STORE,
     deckList: { name: 'test' }
   })).toEqual({
     deckList: { name: 'test' }
   })
 })
 
-it('handles STORE_DECK_ORDER action', () => {
+it('handles DECK_ORDER_STORE action', () => {
   expect(reducer({}, {
-    type: ActionTypes.STORE_DECK_ORDER,
+    type: ActionTypes.DECK_ORDER_STORE,
     deckOrder: ['test1', 'test2']
   })).toEqual({
     deckOrder: ['test1', 'test2']
