@@ -8,5 +8,6 @@ const execSyncOptions = { stdio: 'inherit' }
 
 execSync('firebase login', execSyncOptions)
 execSync('firebase use --add', execSyncOptions)
+require('./importAdmins')()
 require('./importDecks')()
 require('./writeEnv')()
