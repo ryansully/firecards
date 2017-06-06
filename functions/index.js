@@ -1,8 +1,13 @@
-var functions = require('firebase-functions');
+const functions = require('firebase-functions')
+const admin = require('./admin')
+const { addAuthUserToDatabase, removeUserFromDatabase } = require('./auth')(admin)
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+const nodeVersions = functions.https.onRequest((req, res) => {
+  res.send(process.versions)
+})
+
+module.exports = {
+  addAuthUserToDatabase,
+  removeUserFromDatabase,
+  nodeVersions,
+}
