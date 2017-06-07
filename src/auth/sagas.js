@@ -1,6 +1,6 @@
-import { all, call, fork, put, take } from 'redux-saga/effects'
-import { auth } from '../firebase'
-import { actions, ActionTypes } from './dux'
+import { all, call, fork, put, select, take } from 'redux-saga/effects'
+import { reduxSagaFirebase } from '../firebase'
+import { actions, ActionTypes, selectors } from './dux'
 
 export function* authUser() {
   while (true) {
@@ -12,14 +12,35 @@ export function* authUser() {
 export function* signOut() {
   while (true) {
     yield take(ActionTypes.SIGN_OUT_REQUEST)
-    yield call([auth, auth.signOut])
+    yield call(reduxSagaFirebase.logout)
     yield put(actions.signOutSuccess())
   }
 }
 
+export function* watchAuthStateChange() {
+  const channel = yield call(reduxSagaFirebase.authChannel)
+
+  while (true) {
+    const { user } = yield take(channel)
+    const storedUser = yield select(selectors.getUser)
+    if (user) {
+      if (!storedUser) { yield put(actions.authUserRequest(user)) }
+    } else {
+      if (storedUser) { yield put(actions.signOutRequest()) }
+    }
+  }
+}
+
+export const sagas = {
+  authUser,
+  signOut,
+  watchAuthStateChange,
+}
+
 export default function* root() {
   yield all([
-    fork(authUser),
-    fork(signOut),
+    fork(sagas.authUser),
+    fork(sagas.signOut),
+    fork(sagas.watchAuthStateChange),
   ])
 }

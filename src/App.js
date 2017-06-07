@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { auth, ui, uiConfig } from './firebase'
+import { ui, uiConfig } from './firebase'
 import { actions as authActions, selectors as authSelectors } from './auth/dux'
 import { Home, NewGame } from './routes'
 import { FirebaseUIAuth } from './components'
@@ -10,22 +10,6 @@ import { FirebaseUIAuth } from './components'
 import './App.css'
 
 export class App extends Component {
-  handleAuthStateChange = (user) => {
-    if (user) {
-      if (!this.props.user) { this.props.authUserRequest(user) }
-    } else {
-      if (this.props.user) { this.props.signOutRequest() }
-    }
-  }
-
-  componentWillMount() {
-    this.removeListener = auth.onAuthStateChanged(this.handleAuthStateChange)
-  }
-
-  componentWillUnmount() {
-    this.removeListener()
-  }
-
   render() {
     const { user } = this.props
     return (
