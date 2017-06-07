@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -9,17 +9,15 @@ import { FirebaseUIAuth } from './components'
 
 import './App.css'
 
-export class App extends Component {
-  render() {
-    const { user } = this.props
-    return (
-      <Router>
-        {user ? (
-          <div>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/game/new" component={NewGame} />
-          </div>
-        ) : (
+export const App = ({ user }) => {
+  return (
+    <Router>
+      {user ? (
+        <div>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/game/new" component={NewGame} />
+        </div>
+      ) : (
           <div className="App">
             <header>
               <img src={process.env.PUBLIC_URL + '/static/images/icons/icon-192x192.png'} alt="logo" className="logo" />
@@ -32,9 +30,8 @@ export class App extends Component {
             <FirebaseUIAuth ui={ui} {...uiConfig} />
           </div>
         )}
-      </Router>
-    )
-  }
+    </Router>
+  )
 }
 
 const mapStateToProps = (state) => ({
