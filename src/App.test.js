@@ -1,11 +1,17 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { App } from './App'
+import { FirebaseUIAuth } from './components'
 
 const user = {name: 'test'}
 
 it('renders without crashing', () => {
   shallow(<App />)
+})
+
+it('renders the auth component when logged out', () => {
+  const wrapper = shallow(<App user={null} />)
+  expect(wrapper.find(FirebaseUIAuth)).toHaveLength(1)
 })
 
 it('creates and removes listener during mount and unmount', () => {
