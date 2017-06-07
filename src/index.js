@@ -7,10 +7,8 @@ import './index.css'
 
 import { Provider } from 'react-redux'
 import configureStore from './configureStore'
-import rootSaga from './sagas'
 
 const store = configureStore()
-store.runSaga(rootSaga)
 
 ReactDOM.render(
   <Provider store={store}>
