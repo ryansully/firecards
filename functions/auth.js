@@ -10,7 +10,7 @@ module.exports = (admin) => {
 
         // is user an admin?
         console.log('Checking /admins...')
-        if (providerUid in snapshot.val()) {
+        if (snapshot.child(providerUid).exists()) {
           // add matching providerUid to /admins
           console.log('DB ADMIN ADD', user)
           snapshot.ref.update({[user.uid]: true})
