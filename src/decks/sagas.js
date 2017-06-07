@@ -1,13 +1,11 @@
 import { all, call, fork, put, select, take } from 'redux-saga/effects'
 import { actions, ActionTypes, selectors } from './dux'
-import { app, FirebaseSagaHelper } from '../firebase'
-
-const helper = new FirebaseSagaHelper(app)
+import { reduxSagaFirebase } from '../firebase'
 
 function* getDeckIndex() {
   while (true) {
     yield take(ActionTypes.DECK_INDEX_REQUEST)
-    const deckIndex = yield call(helper.get, '/decks/!index')
+    const deckIndex = yield call(reduxSagaFirebase.get, '/decks/!index')
     const { '!order': deckOrder, ...deckList } = deckIndex
     yield put(actions.storeDeckList(deckList))
     yield put(actions.storeDeckOrder(deckOrder))

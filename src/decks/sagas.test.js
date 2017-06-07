@@ -1,5 +1,6 @@
 import { all, call, fork, put, select, take } from 'redux-saga/effects'
 import { cloneableGenerator } from 'redux-saga/utils'
+import { reduxSagaFirebase } from '../firebase'
 import { actions, ActionTypes, selectors } from './dux'
 import root, { sagas } from './sagas'
 
@@ -11,8 +12,8 @@ describe('getDeckIndex saga', () => {
   })
 
   it('gets a deck index from the database', () => {
-    const nextValue = generator.next().value
-    expect(nextValue.CALL.args).toEqual(['/decks/!index'])
+    expect(generator.next().value)
+      .toEqual(call(reduxSagaFirebase.get, '/decks/!index'))
   })
 
   it('dispatches an action that stores a deck list', () => {

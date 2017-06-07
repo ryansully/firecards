@@ -1,6 +1,6 @@
 import firebase from 'firebase'
 import * as firebaseui from 'firebaseui'
-export { default as FirebaseSagaHelper } from './FirebaseSagaHelper'
+import ReduxSagaFirebase from 'redux-saga-firebase'
 
 export const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -15,6 +15,7 @@ export const app = firebase.initializeApp(config)
 export const auth = firebase.auth()
 export const database = firebase.database()
 export const ui = new firebaseui.auth.AuthUI(auth)
+export const reduxSagaFirebase = new ReduxSagaFirebase(app)
 export default firebase
 
 export const uiConfig = {
