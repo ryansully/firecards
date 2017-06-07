@@ -5,15 +5,27 @@ import { actions, ActionTypes, selectors } from './dux'
 export function* authUser() {
   while (true) {
     const action = yield take(ActionTypes.AUTH_USER_REQUEST)
-    yield put(actions.authUserSuccess(action.user))
+
+    // dispatch action only if user is not already stored
+    const user = yield select(selectors.getUser)
+    if (!user) {
+      yield put(actions.authUserSuccess(action.user))
+    }
   }
 }
 
 export function* signOut() {
   while (true) {
     yield take(ActionTypes.SIGN_OUT_REQUEST)
+
+    // sign out user from Firebase
     yield call(reduxSagaFirebase.logout)
-    yield put(actions.signOutSuccess())
+
+    // dispatch action only if user is already stored
+    const user = yield select(selectors.getUser)
+    if (user) {
+      yield put(actions.signOutSuccess())
+    }
   }
 }
 
@@ -22,11 +34,10 @@ export function* watchAuthStateChange() {
 
   while (true) {
     const { user } = yield take(channel)
-    const storedUser = yield select(selectors.getUser)
     if (user) {
-      if (!storedUser) { yield put(actions.authUserRequest(user)) }
+      yield put(actions.authUserRequest(user))
     } else {
-      if (storedUser) { yield put(actions.signOutRequest()) }
+      yield put(actions.signOutRequest())
     }
   }
 }
