@@ -4,7 +4,7 @@
   "description": "FireCards",
   "private": true,
   "dependencies": {
-    "firebase": "^4.1.1",
+    "firebase": "^4.1.2",
     "firebaseui": "^2.0.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
