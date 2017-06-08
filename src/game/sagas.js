@@ -1,5 +1,5 @@
 import { all, call, put, select, take, takeEvery } from 'redux-saga/effects'
-import { reduxSagaFirebase } from '../firebase'
+import firebase, { reduxSagaFirebase } from '../firebase'
 import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
 
@@ -19,6 +19,7 @@ export function* createGame(action) {
   const newGame = {
     host: authUser.uid,
     decks: action.decks,
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
   }
   try {
     const key = yield call(reduxSagaFirebase.create, 'games', newGame)

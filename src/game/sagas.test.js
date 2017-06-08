@@ -1,6 +1,6 @@
 import { all, call, put, select, take, takeEvery } from 'redux-saga/effects'
 import { cloneableGenerator } from 'redux-saga/utils'
-import { reduxSagaFirebase } from '../firebase'
+import firebase, { reduxSagaFirebase } from '../firebase'
 import root, { sagas, channels } from './sagas'
 import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
@@ -45,6 +45,7 @@ describe('createGame saga', () => {
   const newGame = {
     host: authUser.uid,
     decks: action.decks,
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
   }
 
   it('calls reduxSagaFirebase.create to push new game', () => {
