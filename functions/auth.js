@@ -7,10 +7,11 @@ module.exports = (admin) => {
     return admin.database().ref('admins').once('value')
       .then((snapshot) => {
         const providerUid = user.providerData[0].uid
+        const isAdmin = snapshot.child(providerUid).exists() || null
 
         // is user an admin?
         console.log('Checking /admins...')
-        if (snapshot.child(providerUid).exists()) {
+        if (isAdmin) {
           // add matching providerUid to /admins
           console.log('DB ADMIN ADD', user)
           snapshot.ref.update({[user.uid]: true})
@@ -22,6 +23,7 @@ module.exports = (admin) => {
           displayName: user.displayName,
           photoURL: user.photoURL,
           providerUid,
+          isAdmin,
         })
       })
   })
