@@ -1,9 +1,9 @@
-import { all, call, fork, put, select, take } from 'redux-saga/effects'
+import { all, call, fork, put, select, take, takeEvery } from 'redux-saga/effects'
 import { cloneableGenerator } from 'redux-saga/utils'
 import { reduxSagaFirebase } from '../firebase'
 import root, { sagas } from './sagas'
 import { actions } from './dux'
-import { selectors as authSelectors } from '../auth/dux'
+import { ActionTypes as authActionTypes, selectors as authSelectors } from '../auth/dux'
 
 describe('watchUser saga', () => {
   const data = {}
@@ -45,6 +45,7 @@ describe('root saga', () => {
   it('yields an array of sagas', () => {
     expect(generator.next().value).toEqual(all([
       fork(sagas.watchUser),
+      takeEvery(authActionTypes.AUTH_USER_SUCCESS, sagas.watchUser),
     ]))
   })
 })
