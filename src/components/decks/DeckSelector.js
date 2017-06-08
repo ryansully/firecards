@@ -1,15 +1,14 @@
 import React from 'react'
 import { Checkbox, Divider, Form, Icon } from 'semantic-ui-react'
 
-const DeckSelector = ({
+export const DeckSelector = ({
   deckList, deckOrder, officialDecks, selectedDecks, submitButton,
   areDecksSelected, toggleAllSelected, toggleOfficialSelected,
   toggleSelectedDeck }) => {
 
-  if (!(deckList && deckOrder)) { return null }
-
+  if (!deckOrder) { deckOrder = [] }
   return (
-    <Form className="DeckSelector">
+    <Form className="DeckSelector" as="fieldset" loading={!(deckList && deckOrder)}>
       <Form.Field>
         <Checkbox label="Toggle All" className="toggleAll"
           checked={areDecksSelected(deckOrder)}

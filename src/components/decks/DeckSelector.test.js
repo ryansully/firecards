@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import DeckSelector from './DeckSelector'
+import { DeckSelector } from './DeckSelector'
 
 const deckList = {
   deck1: {
@@ -32,12 +32,17 @@ const props = {
 }
 
 it('renders without crashing', () => {
-  shallow(<DeckSelector />)
+  shallow(<DeckSelector {...props} />)
 })
 
-it('renders nothing without props', () => {
-  const wrapper = shallow(<DeckSelector />)
-  expect(wrapper.find('.DeckSelector').length).toEqual(0)
+it('shows a loader with no deck list and order', () => {
+  const wrapper = shallow(<DeckSelector areDecksSelected={areDecksSelected}/>)
+  expect(wrapper.prop('loading')).toEqual(true)
+})
+
+it('hides the loader when there is deck list and order', () => {
+  const wrapper = shallow(<DeckSelector {...props} />)
+  expect(wrapper.prop('loading')).toEqual(false)
 })
 
 it('renders a form when passed deckList and deckOrder', () => {
