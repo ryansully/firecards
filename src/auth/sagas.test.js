@@ -60,7 +60,7 @@ describe('signOut saga', () => {
   })
 })
 
-describe('watchAuthStateChange saga', function () {
+describe('watchAuthStateChange saga', () => {
   const data = {}
   data.gen = cloneableGenerator(sagas.watchAuthStateChange)()
 
