@@ -1,3 +1,7 @@
 .PageContainer.dimmable {
   height: 100vh;
 }
+
+.PageContainer .container {
+  padding: 10px 0;
+}
