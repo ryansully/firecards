@@ -1,4 +1,4 @@
-import { all, call, fork, put, select, take } from 'redux-saga/effects'
+import { all, call, fork, put, select, take, takeEvery } from 'redux-saga/effects'
 import { cloneableGenerator } from 'redux-saga/utils'
 import { reduxSagaFirebase } from '../firebase'
 import { actions, ActionTypes, selectors } from './dux'
@@ -6,17 +6,12 @@ import root, { sagas } from './sagas'
 
 describe('authUser saga', () => {
   const user = {name: 'test'}
-  const data = {}
-  data.gen = cloneableGenerator(sagas.authUser)()
-
-  it('waits for auth requests', () => {
-    expect(data.gen.next().value).toEqual(take(ActionTypes.AUTH_USER_REQUEST))
-  })
-
   const action = actions.authUserRequest(user)
+  const data = {}
+  data.gen = cloneableGenerator(sagas.authUser)(action)
 
   it('selects auth user from state', () => {
-    expect(data.gen.next(action).value).toEqual(select(selectors.getUser))
+    expect(data.gen.next().value).toEqual(select(selectors.getUser))
   })
 
   it('dispatches a auth success action if user is not already stored', () => {
@@ -25,19 +20,17 @@ describe('authUser saga', () => {
       .toEqual(put(actions.authUserSuccess(user)))
   })
 
-  it('continues watching with no action if user is already stored', () => {
-    expect(data.clone.next(user).value)
-      .toEqual(take(ActionTypes.AUTH_USER_REQUEST))
+  it('exits if user is already stored', () => {
+    expect(data.clone.next(user)).toEqual({
+      value: undefined,
+      done: true
+    })
   })
 })
 
 describe('signOut saga', () => {
   const data = {}
   data.gen = cloneableGenerator(sagas.signOut)()
-
-  it('waits for sign out requests', () => {
-    expect(data.gen.next().value).toEqual(take(ActionTypes.SIGN_OUT_REQUEST))
-  })
 
   it('calls reduxSagaFirebase.logout', () => {
     expect(data.gen.next().value).toEqual(call(reduxSagaFirebase.logout))
@@ -54,9 +47,11 @@ describe('signOut saga', () => {
     expect(data.gen.next(user).value).toEqual(put(actions.signOutSuccess()))
   })
 
-  it('continues watching with no action if user is not stored', () => {
-    expect(data.clone.next(null).value)
-      .toEqual(take(ActionTypes.SIGN_OUT_REQUEST))
+  it('exits if user is not stored', () => {
+    expect(data.clone.next(null)).toEqual({
+      value: undefined,
+      done: true
+    })
   })
 })
 
@@ -76,16 +71,13 @@ describe('watchAuthStateChange saga', () => {
 
   const user = {name: 'test'}
 
-  it('dispatches an action to authenticate user', () => {
-    // clone generator from emitted user from auth state change
+  it('calls authUser saga', () => {
     data.clone = data.gen.clone()
-    expect(data.gen.next({user}).value)
-      .toEqual(put(actions.authUserRequest(user)))
+    expect(data.gen.next({user}).value).toEqual(call(sagas.authUser, {user}))
   })
 
-  it('dispatches an action to sign out a user', () => {
-    expect(data.clone.next({user: null}).value)
-      .toEqual(put(actions.signOutRequest()))
+  it('calls signOut saga', () => {
+    expect(data.clone.next({user: null}).value).toEqual(call(sagas.signOut))
   })
 })
 
@@ -94,8 +86,8 @@ describe('root saga', () => {
 
   it('yields an array of sagas', () => {
     expect(generator.next().value).toEqual(all([
-      fork(sagas.authUser),
-      fork(sagas.signOut),
+      takeEvery(ActionTypes.AUTH_USER_REQUEST, sagas.authUser),
+      takeEvery(ActionTypes.SIGN_OUT_REQUEST, sagas.signOut),
       fork(sagas.watchAuthStateChange),
     ]))
   })
