@@ -5,9 +5,9 @@ import root, { sagas } from './sagas'
 import { actions } from './dux'
 import { ActionTypes as authActionTypes, selectors as authSelectors } from '../auth/dux'
 
-describe('watchUser saga', () => {
+describe('watchCurrentUser saga', () => {
   const data = {}
-  data.gen = cloneableGenerator(sagas.watchUser)()
+  data.gen = cloneableGenerator(sagas.watchCurrentUser)()
 
   it('selects auth user from state', () => {
     expect(data.gen.next().value).toEqual(select(authSelectors.getUser))
@@ -44,8 +44,8 @@ describe('root saga', () => {
 
   it('yields an array of sagas', () => {
     expect(generator.next().value).toEqual(all([
-      fork(sagas.watchUser),
-      takeEvery(authActionTypes.AUTH_USER_SUCCESS, sagas.watchUser),
+      fork(sagas.watchCurrentUser),
+      takeEvery(authActionTypes.AUTH_USER_SUCCESS, sagas.watchCurrentUser),
     ]))
   })
 })

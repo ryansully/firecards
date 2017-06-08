@@ -3,7 +3,7 @@ import { reduxSagaFirebase } from '../firebase'
 import { actions } from './dux'
 import { ActionTypes as authActionTypes, selectors as authSelectors } from '../auth/dux'
 
-export function* watchUser() {
+export function* watchCurrentUser() {
   const authUser = yield select(authSelectors.getUser)
   if (!authUser) { return }
   const channel = yield call(reduxSagaFirebase.channel, 'users/' + authUser.uid)
@@ -15,12 +15,12 @@ export function* watchUser() {
 }
 
 export const sagas = {
-  watchUser,
+  watchCurrentUser,
 }
 
 export default function* root() {
   yield all([
-    fork(sagas.watchUser),
-    takeEvery(authActionTypes.AUTH_USER_SUCCESS, sagas.watchUser),
+    fork(sagas.watchCurrentUser),
+    takeEvery(authActionTypes.AUTH_USER_SUCCESS, sagas.watchCurrentUser),
   ])
 }

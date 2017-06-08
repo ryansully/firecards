@@ -10,7 +10,7 @@ it('creates action to get a user', () => {
     name: 'test'
   })).toEqual({
     type: ActionTypes.USER_GET_SUCCESS,
-    user: { name: 'test' }
+    currentUser: { name: 'test' }
   })
 })
 

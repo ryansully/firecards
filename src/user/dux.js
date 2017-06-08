@@ -3,7 +3,7 @@ export const ActionTypes = {
 }
 
 export const actions = {
-  getUserSuccess: (user) => ({type: ActionTypes.USER_GET_SUCCESS, user}),
+  getUserSuccess: (currentUser) => ({type: ActionTypes.USER_GET_SUCCESS, currentUser}),
 }
 
 export const selectors = {
