@@ -3,7 +3,8 @@ import { Container, Dimmer, Loader } from 'semantic-ui-react'
 import Navigation from '../Navigation/Navigation'
 import './PageContainer.css'
 
-const PageContainer = ({ className, children, loading = false }) => {
+const PageContainer = ({ pageTitle, className, children, loading = false }) => {
+  document.title = (pageTitle ? `${pageTitle} - ` : '') + 'FireCards'
   return (
     <Dimmer.Dimmable className={`${className || ''} PageContainer`} dimmed={loading}>
       <Navigation />
