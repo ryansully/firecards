@@ -36,7 +36,7 @@ const DeckSelector = ({
           />
         )
       })}
-      {React.cloneElement(submitButton, { disabled: !selectedDecks.length })}
+      {submitButton && React.cloneElement(submitButton, { disabled: !selectedDecks.length })}
     </Form>
   )
 }
