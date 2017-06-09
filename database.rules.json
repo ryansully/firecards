@@ -1,7 +1,7 @@
 {
   "rules": {
     "decks": {
-      // only logged in users can see decks
+      // only logged-in users can see decks
       ".read": "auth != null"
     },
     "games": {
@@ -16,11 +16,10 @@
       }
     },
     "users": {
-      // only admins can see all users
-      ".read": "root.child('admins/'+auth.uid).exists()",
-      "$uid": {
-        ".read": "auth != null && auth.uid == $uid"
-      }
+      // only logged-in unbanned users can see users
+      ".read": "auth != null && !root.child('banned/'+auth.uid).exists()",
+      // only admins can modify any user
+      ".write": "root.child('admins/'+auth.uid).exists()"
     }
   }
 }
