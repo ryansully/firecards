@@ -5,12 +5,11 @@ const currentUser = {
   isGuest: true,
 }
 
-it('creates action to get a user', () => {
-  expect(actions.getUserSuccess({
-    name: 'test'
-  })).toEqual({
-    type: ActionTypes.USER_GET_SUCCESS,
-    currentUser: { name: 'test' }
+it('creates action to sync the current user', () => {
+  const currentUser = {name: 'test'}
+  expect(actions.syncCurrentUser(currentUser)).toEqual({
+    type: ActionTypes.CURRENT_USER_SYNC,
+    currentUser
   })
 })
 
@@ -30,11 +29,12 @@ it('returns the initial state', () => {
   expect(reducer(undefined, {})).toEqual(initialState)
 })
 
-it('handles USER_GET_SUCCESS action', () => {
+it('handles CURRENT_USER_SYNC action', () => {
+  const currentUser = {name: 'test'}
   expect(reducer({}, {
-    type: ActionTypes.USER_GET_SUCCESS,
-    currentUser: { name: 'test' }
+    type: ActionTypes.CURRENT_USER_SYNC,
+    currentUser
   })).toEqual({
-    currentUser: { name: 'test' }
+    currentUser
   })
 })

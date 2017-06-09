@@ -1,26 +1,17 @@
 import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
-it('creates actions to authenticate a user', () => {
-  expect(actions.authUserRequest({
+it('creates action to sync auth user', () => {
+  expect(actions.syncAuthUser({
     name: 'test'
   })).toEqual({
-    type: ActionTypes.AUTH_USER_REQUEST,
-    user: { name: 'test' }
-  })
-  expect(actions.authUserSuccess({
-    name: 'test'
-  })).toEqual({
-    type: ActionTypes.AUTH_USER_SUCCESS,
+    type: ActionTypes.AUTH_USER_SYNC,
     user: { name: 'test' }
   })
 })
 
-it('creates actions to sign out a user', () => {
-  expect(actions.signOutRequest()).toEqual({
-    type: ActionTypes.SIGN_OUT_REQUEST
-  })
-  expect(actions.signOutSuccess()).toEqual({
-    type: ActionTypes.SIGN_OUT_SUCCESS
+it('creates action to sign out a user', () => {
+  expect(actions.signOut()).toEqual({
+    type: ActionTypes.SIGN_OUT
   })
 })
 
@@ -32,19 +23,11 @@ it('returns the initial state', () => {
   expect(reducer(undefined, {})).toEqual(initialState)
 })
 
-it('handles AUTH_USER action', () => {
+it('handles AUTH_USER_SYNC action', () => {
   expect(reducer({}, {
-    type: ActionTypes.AUTH_USER_SUCCESS,
+    type: ActionTypes.AUTH_USER_SYNC,
     user: { name: 'test' }
   })).toEqual({
     user: { name: 'test' }
-  })
-})
-
-it('handles SIGN_OUT action', () => {
-  expect(reducer({}, {
-    type: ActionTypes.SIGN_OUT_SUCCESS
-  })).toEqual({
-    user: null
   })
 })

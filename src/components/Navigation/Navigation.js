@@ -17,7 +17,7 @@ export const Navigation = (props) => {
         <Dropdown item trigger={<Image src={props.user.photoURL} avatar />} className="user">
           <Dropdown.Menu>
             <Dropdown.Header content={props.user.displayName} />
-            <Dropdown.Item onClick={props.signOutRequest}>Sign Out</Dropdown.Item>
+            <Dropdown.Item onClick={props.signOut}>Sign Out</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </Menu.Menu>

@@ -1,24 +1,43 @@
-import { all, call, fork, put, select, take, takeEvery } from 'redux-saga/effects'
-import { cloneableGenerator } from 'redux-saga/utils'
+import { all, call, put, take, takeEvery } from 'redux-saga/effects'
 import { reduxSagaFirebase } from '../firebase'
-import root, { sagas } from './sagas'
 import { actions } from './dux'
-import { ActionTypes as authActionTypes, selectors as authSelectors } from '../auth/dux'
+import { ActionTypes as authActionTypes } from '../auth/dux'
+import root, { channels, sagas } from './sagas'
 
-describe('watchCurrentUser saga', () => {
+describe('closeCurrentUser saga', () => {
   const data = {}
-  data.gen = cloneableGenerator(sagas.watchCurrentUser)()
+  data.gen = sagas.closeCurrentUser()
+  data.noChannel = sagas.closeCurrentUser()
 
-  it('selects auth user from state', () => {
-    expect(data.gen.next().value).toEqual(select(authSelectors.getUser))
+  it('does nothing if there is no current user channel', () => {
+    expect(data.noChannel.next()).toEqual({
+      value: undefined,
+      done: true,
+    })
   })
 
-  it('exits if there is no auth user', () => {
-    data.noAuthUser = data.gen.clone()
-    expect(data.noAuthUser.next()).toEqual({
-      value: undefined,
-      done: true
-    })
+  const close = jest.fn()
+
+  it('dispatches an action to sync the current user with null', () => {
+    channels.currentUser = {close}
+    expect(data.gen.next().value)
+      .toEqual(put(actions.syncCurrentUser(null)))
+  })
+
+  it('closes the current user channel', () => {
+    expect(close).toBeCalled()
+  })
+})
+
+describe('watchCurrentUser saga', () => {
+  const user = {uid: 'test'}
+  const action = {user}
+  const data = {}
+  data.gen = sagas.watchCurrentUser(action)
+  data.noAuthUser = sagas.watchCurrentUser({user: null})
+
+  it('closes the current user channel if there is no auth user', () => {
+    expect(data.noAuthUser.next().value).toEqual(call(sagas.closeCurrentUser))
   })
 
   it('calls reduxSagaFirebase.channel', () => {
@@ -32,10 +51,9 @@ describe('watchCurrentUser saga', () => {
     expect(data.gen.next(channel).value).toEqual(take(channel))
   })
 
-  const user = {name: 'test'}
-
-  it('dispatches an action that stores the user', () => {
-    expect(data.gen.next(user).value).toEqual(put(actions.getUserSuccess(user)))
+  it('dispatches an action to sync the current user', () => {
+    expect(data.gen.next(user).value)
+      .toEqual(put(actions.syncCurrentUser(user)))
   })
 })
 
@@ -44,8 +62,7 @@ describe('root saga', () => {
 
   it('yields an array of sagas', () => {
     expect(generator.next().value).toEqual(all([
-      fork(sagas.watchCurrentUser),
-      takeEvery(authActionTypes.AUTH_USER_SUCCESS, sagas.watchCurrentUser),
+      takeEvery(authActionTypes.AUTH_USER_SYNC, sagas.watchCurrentUser),
     ]))
   })
 })

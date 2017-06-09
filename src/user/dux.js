@@ -1,9 +1,9 @@
 export const ActionTypes = {
-  USER_GET_SUCCESS: 'user/USER_GET_SUCCESS',
+  CURRENT_USER_SYNC: 'user/CURRENT_USER_SYNC',
 }
 
 export const actions = {
-  getUserSuccess: (currentUser) => ({type: ActionTypes.USER_GET_SUCCESS, currentUser}),
+  syncCurrentUser: (currentUser) => ({type: ActionTypes.CURRENT_USER_SYNC, currentUser}),
 }
 
 export const selectors = {
@@ -18,7 +18,7 @@ export const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.USER_GET_SUCCESS:
+    case ActionTypes.CURRENT_USER_SYNC:
       return {
         ...state,
         currentUser: action.currentUser

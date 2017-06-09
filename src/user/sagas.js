@@ -1,26 +1,42 @@
-import { all, call, fork, put, select, take, takeEvery } from 'redux-saga/effects'
+import { all, call, put, take, takeEvery } from 'redux-saga/effects'
 import { reduxSagaFirebase } from '../firebase'
 import { actions } from './dux'
-import { ActionTypes as authActionTypes, selectors as authSelectors } from '../auth/dux'
+import { ActionTypes as authActionTypes } from '../auth/dux'
 
-export function* watchCurrentUser() {
-  const authUser = yield select(authSelectors.getUser)
-  if (!authUser) { return }
-  const channel = yield call(reduxSagaFirebase.channel, 'users/' + authUser.uid)
+export const channels = {
+  currentUser: null,
+}
 
-  while (true) {
-    const user = yield take(channel)
-    yield put(actions.getUserSuccess(user))
+export function* closeCurrentUser() {
+  if (channels.currentUser) {
+    channels.currentUser.close()
+    yield put(actions.syncCurrentUser(null))
+  }
+}
+
+export function* watchCurrentUser(action) {
+  const authUser = action.user
+
+  if (authUser) {
+    const path = 'users/' + authUser.uid
+    channels.currentUser = yield call(reduxSagaFirebase.channel, path)
+
+    while (true) {
+      const currentUser = yield take(channels.currentUser)
+      yield put(actions.syncCurrentUser(currentUser))
+    }
+  } else {
+    yield call(sagas.closeCurrentUser)
   }
 }
 
 export const sagas = {
+  closeCurrentUser,
   watchCurrentUser,
 }
 
 export default function* root() {
   yield all([
-    fork(sagas.watchCurrentUser),
-    takeEvery(authActionTypes.AUTH_USER_SUCCESS, sagas.watchCurrentUser),
+    takeEvery(authActionTypes.AUTH_USER_SYNC, sagas.watchCurrentUser),
   ])
 }
