@@ -2,24 +2,15 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Redirect } from 'react-router-dom'
 import { NewGame } from './NewGame'
-import { PageContainer } from '../../components'
 
 it('renders without crashing', () => {
   shallow(<NewGame />)
 })
 
-it('shows a loading page container with no deck list', () => {
+it('handles game name change event', () => {
   const wrapper = shallow(<NewGame />)
-  const container = wrapper.find(PageContainer)
-  expect(container.length).toEqual(1)
-  expect(container.prop('loading')).toEqual(true)
-})
-
-it('hides the page container loader when there is deck list and order', () => {
-  const wrapper = shallow(<NewGame deckList={{}} deckOrder={[]} />)
-  const container = wrapper.find(PageContainer)
-  expect(container.length).toEqual(1)
-  expect(container.prop('loading')).toEqual(false)
+  wrapper.find('#gameName').simulate('change', {target: {value: 'test'}})
+  expect(wrapper.state('gameName')).toEqual('test')
 })
 
 it('handles submit button click', () => {
@@ -43,8 +34,19 @@ it('redirects after game is created', () => {
   expect(wrapper.find(Redirect).length).toEqual(1)
 })
 
-it('does not update if there is no deck list or order', () => {
+it('does not rerender if there is no deck list or order', () => {
   const deckList = {}
   const wrapper = shallow(<NewGame deckList={deckList} />)
   expect(wrapper.instance().shouldComponentUpdate({deckList})).toEqual(false)
+})
+
+it('does not rerender if game name changes', () => {
+  const nextProps = {
+    deckList: {},
+    deckOrder: {}
+  }
+  const gameName = 'test'
+  const wrapper = shallow(<NewGame />)
+  expect(wrapper.instance().shouldComponentUpdate(nextProps, {gameName}))
+    .toEqual(false)
 })

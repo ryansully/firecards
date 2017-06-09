@@ -9,7 +9,7 @@ export const ActionTypes = {
 
 export const actions = {
   closeCurrentGame: () => ({type: ActionTypes.CURRENT_GAME_CLOSE}),
-  createGameRequest: (decks) => ({type: ActionTypes.GAME_CREATE_REQUEST, decks}),
+  createGameRequest: (newGame) => ({type: ActionTypes.GAME_CREATE_REQUEST, newGame}),
   createGameSuccess: (currentGame) => ({type: ActionTypes.GAME_CREATE_SUCCESS, currentGame}),
   createGameError: (error) => ({type: ActionTypes.GAME_CREATE_ERROR, error}),
   loadCurrentGame: (gameKey) => ({type: ActionTypes.CURRENT_GAME_LOAD, gameKey}),

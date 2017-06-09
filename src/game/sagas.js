@@ -14,11 +14,18 @@ export function* closeCurrentGame() {
 }
 
 export function* createGame(action) {
+  let { newGame } = action
+  if (!newGame) { return }
+
+  // stop listening to current game changes
   yield call(sagas.closeCurrentGame)
+
   const authUser = yield select(authSelectors.getUser)
-  const newGame = {
+  newGame = {
+    ...newGame,
+    // default to auth user's name if no game name was provided
+    name: newGame.name || `${authUser.displayName}'s Game`,
     host: authUser.uid,
-    decks: action.decks,
     createdAt: firebase.database.ServerValue.TIMESTAMP,
   }
   try {

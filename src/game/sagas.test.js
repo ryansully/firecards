@@ -26,47 +26,70 @@ describe('closeCurrentGame saga', () => {
 })
 
 describe('createGame saga', () => {
-  const action = {decks: ['test']}
-  const generator = sagas.createGame(action)
+  const decks = ['test']
+  let newGame = {name: 'test', decks}
+  let newGameNoName = {name: '', decks}
+  const action = {newGame}
+  const data = {}
+  data.gen = cloneableGenerator(sagas.createGame)(action)
+  data.noName = sagas.createGame({newGame: newGameNoName})
+
+  it('exits if there is no game in action', () => {
+    data.noGame = sagas.createGame({newGame: null})
+    expect(data.noGame.next()).toEqual({
+      value: undefined,
+      done: true
+    })
+  })
 
   it('calls closeCurrentGame saga', () => {
-    expect(generator.next(action).value).toEqual(call(sagas.closeCurrentGame))
+    expect(data.gen.next().value).toEqual(call(sagas.closeCurrentGame))
+    expect(data.noName.next().value).toEqual(call(sagas.closeCurrentGame))
   })
 
   it('selects auth user from state', () => {
-    expect(generator.next(action).value)
+    expect(data.gen.next().value)
+      .toEqual(select(authSelectors.getUser))
+    expect(data.noName.next().value)
       .toEqual(select(authSelectors.getUser))
   })
 
   const authUser = {
-    uid: 'uid'
+    uid: 'uid',
+    displayName: 'Testy McTestface'
   }
 
-  const newGame = {
+  newGame = {
+    ...newGame,
     host: authUser.uid,
-    decks: action.decks,
     createdAt: firebase.database.ServerValue.TIMESTAMP,
   }
 
+  newGameNoName = {
+    ...newGame,
+    name: `${authUser.displayName}'s Game`
+  }
+
   it('calls reduxSagaFirebase.create to push new game', () => {
-    expect(generator.next(authUser).value)
+    expect(data.gen.next(authUser).value)
       .toEqual(call(reduxSagaFirebase.create, 'games', newGame))
+    expect(data.noName.next(authUser).value)
+      .toEqual(call(reduxSagaFirebase.create, 'games', newGameNoName))
   })
 
   const key = 'game_key'
 
   it('dispatches action to store a newly created game', () => {
-    expect(generator.next(key).value)
+    expect(data.gen.next(key).value)
       .toEqual(put(actions.createGameSuccess({...newGame, key})))
   })
 
   const error = Error('test')
 
   it('dispatches action when game creation error is thrown', () => {
-    expect(generator.throw(error).value)
+    expect(data.gen.throw(error).value)
       .toEqual(put(actions.createGameError(error)))
   })
-
 })
 
 describe('watchCurrentGame saga', () => {

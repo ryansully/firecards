@@ -1,5 +1,6 @@
 import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
+const newGame = {name: 'test'}
 const currentGame = {key: 'game_key'}
 
 it('creates action to close the current game', () => {
@@ -9,9 +10,9 @@ it('creates action to close the current game', () => {
 })
 
 it('creates action to request a created game', () => {
-  expect(actions.createGameRequest(['test'])).toEqual({
+  expect(actions.createGameRequest(newGame)).toEqual({
     type: ActionTypes.GAME_CREATE_REQUEST,
-    decks: ['test']
+    newGame
   })
 })
 
