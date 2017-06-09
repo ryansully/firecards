@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { actions as gameActions, selectors as gameSelectors } from '../../game/dux'
+import { actions as gameActions, selectors as gameSelectors } from '../dux'
 
 const withCurrentGame = (WrappedComponent) => {
   const wrappedComponentName = WrappedComponent.displayName

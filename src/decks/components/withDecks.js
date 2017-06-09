@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { actions as decksActions, selectors as decksSelectors } from '../../decks/dux'
+import { actions as decksActions, selectors as decksSelectors } from '../dux'
 
 const withDecks = (WrappedComponent) => {
   const wrappedComponentName = WrappedComponent.displayName
