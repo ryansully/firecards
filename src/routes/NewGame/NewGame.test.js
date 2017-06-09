@@ -1,6 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Redirect } from 'react-router-dom'
+import { Form, Message } from 'semantic-ui-react'
 import { NewGame } from './NewGame'
 
 it('renders without crashing', () => {
@@ -49,4 +50,11 @@ it('does not rerender if game name changes', () => {
   const wrapper = shallow(<NewGame />)
   expect(wrapper.instance().shouldComponentUpdate(nextProps, {gameName}))
     .toEqual(false)
+})
+
+it('displays an error message from the database', () => {
+  const gameCreateError = {code: 'ERROR'}
+  const wrapper = shallow(<NewGame gameCreateError={gameCreateError} />)
+  expect(wrapper.find(Form).prop('error')).toEqual(true)
+  expect(wrapper.find(Message).length).toEqual(1)
 })

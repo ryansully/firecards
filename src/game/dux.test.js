@@ -2,6 +2,7 @@ import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
 const newGame = {name: 'test'}
 const currentGame = {key: 'game_key'}
+const gameCreateError = Error('test')
 
 it('creates action to close the current game', () => {
   expect(actions.closeCurrentGame()).toEqual({
@@ -24,10 +25,9 @@ it('creates action to store a newly created game', () => {
 })
 
 it('creates action to handle game creation error', () => {
-  const error = Error('test')
-  expect(actions.createGameError(error)).toEqual({
+  expect(actions.createGameError(gameCreateError)).toEqual({
     type: ActionTypes.GAME_CREATE_ERROR,
-    error
+    gameCreateError
   })
 })
 
@@ -47,6 +47,10 @@ it('creates action to sync the current game', () => {
 
 it('selects current game from state', () => {
   expect(selectors.getCurrentGame({game: initialState})).toEqual(null)
+})
+
+it('selects game create error from state', () => {
+  expect(selectors.getGameCreateError({game: initialState})).toEqual(null)
 })
 
 it('returns the initial state', () => {
@@ -73,4 +77,11 @@ it('handles GAME_CREATE_SUCCESS action', () => {
     type: ActionTypes.GAME_CREATE_SUCCESS,
     currentGame
   })).toEqual({currentGame})
+})
+
+it('handles GAME_CREATE_ERROR action', () => {
+  expect(reducer({}, {
+    type: ActionTypes.GAME_CREATE_ERROR,
+    gameCreateError
+  })).toEqual({gameCreateError})
 })

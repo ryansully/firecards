@@ -23,7 +23,8 @@ const withCurrentGame = (WrappedComponent) => {
   }
 
   const mapStateToProps = (state) => ({
-    currentGame: gameSelectors.getCurrentGame(state)
+    currentGame: gameSelectors.getCurrentGame(state),
+    gameCreateError: gameSelectors.getGameCreateError(state),
   })
 
   const mapDispatchToProps = (dispatch) => ({
