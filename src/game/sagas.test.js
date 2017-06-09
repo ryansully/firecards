@@ -80,23 +80,26 @@ describe('watchCurrentGame saga', () => {
   })
 
   it('calls reduxSagaFirebase.channel', () => {
-    data.clone = data.gen.clone()
-    expect(data.gen.next().value)
-      .toEqual(call(reduxSagaFirebase.channel, 'games/' + action.gameKey))
-    expect(data.clone.next(currentGame).value)
+    data.noCurrentGame = data.gen.clone()
+    expect(data.gen.next(currentGame).value)
       .toEqual(call(reduxSagaFirebase.channel, 'games/' + currentGame.key))
+    expect(data.noCurrentGame.next().value)
+      .toEqual(call(reduxSagaFirebase.channel, 'games/' + action.gameKey))
   })
 
   const channel = reduxSagaFirebase.channel('games/test')
 
   it('waits for channel event', () => {
     expect(data.gen.next(channel).value).toEqual(take(channel))
+    expect(data.noCurrentGame.next(channel).value).toEqual(take(channel))
   })
 
   it('dispatches action to sync current game with database', () => {
     expect(data.gen.next().value).toEqual(put(actions.syncCurrentGame({
-      key: action.gameKey
+      key: currentGame.key
     })))
+    expect(data.noCurrentGame.next().value)
+      .toEqual(put(actions.syncCurrentGame({key: action.gameKey})))
   })
 })
 

@@ -31,9 +31,14 @@ export function* createGame(action) {
 
 export function* watchCurrentGame(action) {
   let currentGame = yield select(selectors.getCurrentGame)
-  if (!currentGame) { currentGame = {key: action.gameKey} }
-  channels.currentGame = yield call(reduxSagaFirebase.channel,
-    'games/' + currentGame.key)
+
+  if (!currentGame) {
+    // use game from game key in action
+    currentGame = {key: action.gameKey}
+  }
+
+  const path = 'games/' + currentGame.key
+  channels.currentGame = yield call(reduxSagaFirebase.channel, path)
 
   while (true) {
     const game = yield take(channels.currentGame)
