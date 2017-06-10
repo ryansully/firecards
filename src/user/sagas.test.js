@@ -30,8 +30,8 @@ describe('closeCurrentUser saga', () => {
 })
 
 describe('watchCurrentUser saga', () => {
-  const user = {uid: 'test'}
-  const action = {user}
+  const authUser = {uid: 'test'}
+  const action = {authUser}
   const data = {}
   data.gen = sagas.watchCurrentUser(action)
   data.noAuthUser = sagas.watchCurrentUser({user: null})
@@ -52,8 +52,8 @@ describe('watchCurrentUser saga', () => {
   })
 
   it('dispatches an action to sync the current user', () => {
-    expect(data.gen.next(user).value)
-      .toEqual(put(actions.syncCurrentUser(user)))
+    expect(data.gen.next(authUser).value)
+      .toEqual(put(actions.syncCurrentUser(authUser)))
   })
 })
 
