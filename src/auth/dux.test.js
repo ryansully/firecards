@@ -5,18 +5,18 @@ it('creates action to sync auth user', () => {
     name: 'test'
   })).toEqual({
     type: ActionTypes.AUTH_USER_SYNC,
-    user: { name: 'test' }
+    authUser: { name: 'test' }
   })
 })
 
-it('creates action to sign out a user', () => {
+it('creates action to sign out auth user', () => {
   expect(actions.signOut()).toEqual({
     type: ActionTypes.SIGN_OUT
   })
 })
 
-it('selects user from state', () => {
-  expect(selectors.getUser({auth: initialState})).toEqual(null)
+it('selects auth user from state', () => {
+  expect(selectors.getAuthUser({auth: initialState})).toEqual(null)
 })
 
 it('returns the initial state', () => {
@@ -26,8 +26,8 @@ it('returns the initial state', () => {
 it('handles AUTH_USER_SYNC action', () => {
   expect(reducer({}, {
     type: ActionTypes.AUTH_USER_SYNC,
-    user: { name: 'test' }
+    authUser: { name: 'test' }
   })).toEqual({
-    user: { name: 'test' }
+    authUser: { name: 'test' }
   })
 })

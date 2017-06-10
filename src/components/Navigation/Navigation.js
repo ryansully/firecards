@@ -6,7 +6,7 @@ import { Dropdown, Image, Menu } from 'semantic-ui-react'
 import { actions as authActions, selectors as authSelectors } from '../../auth/dux'
 import './Navigation.css'
 
-export const Navigation = (props) => {
+export const Navigation = ({ authUser, signOut }) => {
   return (
     <Menu attached="top" inverted className="Navigation">
       <Menu.Item header>
@@ -14,10 +14,10 @@ export const Navigation = (props) => {
       </Menu.Item>
       <Menu.Item as={NavLink} exact to="/">Dashboard</Menu.Item>
       <Menu.Menu position="right">
-        <Dropdown item trigger={<Image src={props.user.photoURL} avatar />} className="user">
+        <Dropdown item trigger={<Image src={authUser.photoURL} avatar />} className="user">
           <Dropdown.Menu>
-            <Dropdown.Header content={props.user.displayName} />
-            <Dropdown.Item onClick={props.signOut}>Sign Out</Dropdown.Item>
+            <Dropdown.Header content={authUser.displayName} />
+            <Dropdown.Item onClick={signOut}>Sign Out</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </Menu.Menu>
@@ -26,11 +26,11 @@ export const Navigation = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  user: authSelectors.getUser(state)
+  authUser: authSelectors.getAuthUser(state),
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators(authActions, dispatch)
+  ...bindActionCreators(authActions, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navigation)

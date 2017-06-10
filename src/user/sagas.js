@@ -15,7 +15,7 @@ export function* closeCurrentUser() {
 }
 
 export function* watchCurrentUser(action) {
-  const authUser = action.user
+  const { authUser } = action
 
   if (authUser) {
     const path = 'users/' + authUser.uid

@@ -7,15 +7,15 @@ export const ActionTypes = {
 
 export const actions = {
   signOut: () => ({type: ActionTypes.SIGN_OUT}),
-  syncAuthUser: (user) => ({type: ActionTypes.AUTH_USER_SYNC, user}),
+  syncAuthUser: (authUser) => ({type: ActionTypes.AUTH_USER_SYNC, authUser}),
 }
 
 export const selectors = {
-  getUser: (state) => state.auth.user
+  getAuthUser: (state) => state.auth.authUser
 }
 
 export const initialState = {
-  user: getAuthUserFromLocalStorage()
+  authUser: getAuthUserFromLocalStorage()
 }
 
 export default function reducer(state = initialState, action) {
@@ -23,7 +23,7 @@ export default function reducer(state = initialState, action) {
     case ActionTypes.AUTH_USER_SYNC:
       return {
         ...state,
-        user: action.user
+        authUser: action.authUser
       }
     default:
       return state

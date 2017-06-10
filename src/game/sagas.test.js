@@ -49,9 +49,9 @@ describe('createGame saga', () => {
 
   it('selects auth user from state', () => {
     expect(data.gen.next().value)
-      .toEqual(select(authSelectors.getUser))
+      .toEqual(select(authSelectors.getAuthUser))
     expect(data.noName.next().value)
-      .toEqual(select(authSelectors.getUser))
+      .toEqual(select(authSelectors.getAuthUser))
   })
 
   const authUser = {

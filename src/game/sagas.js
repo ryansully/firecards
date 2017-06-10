@@ -20,7 +20,7 @@ export function* createGame(action) {
   // stop listening to current game changes
   yield call(sagas.closeCurrentGame)
 
-  const authUser = yield select(authSelectors.getUser)
+  const authUser = yield select(authSelectors.getAuthUser)
   newGame = {
     ...newGame,
     // default to auth user's name if no game name was provided

@@ -9,10 +9,10 @@ import { FirebaseUIAuth } from './components'
 
 import './App.css'
 
-export const App = ({ user }) => {
+export const App = ({ authUser }) => {
   return (
     <Router>
-      {user ? (
+      {authUser ? (
         <div>
           <Route exact path="/" component={Home} />
           <Switch>
@@ -38,11 +38,11 @@ export const App = ({ user }) => {
 }
 
 const mapStateToProps = (state) => ({
-  user: authSelectors.getUser(state)
+  authUser: authSelectors.getAuthUser(state),
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators(authActions, dispatch)
+  ...bindActionCreators(authActions, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -2,10 +2,11 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Navigation } from './Navigation'
 
-const user = {
-  photoURL: 'image.jpg'
+const authUser = {
+  photoURL: 'image.jpg',
+  displayName: 'Testy McTestface',
 }
 
 it('renders without crashing', () => {
-  shallow(<Navigation user={user} />)
+  shallow(<Navigation authUser={authUser} />)
 })
