@@ -29,8 +29,8 @@ export function* createGame(action) {
     createdAt: firebase.database.ServerValue.TIMESTAMP,
   }
   try {
-    const key = yield call(reduxSagaFirebase.create, 'games', newGame)
-    yield put(actions.createGameSuccess({...newGame, key}))
+    const gameKey = yield call(reduxSagaFirebase.create, 'games', newGame)
+    yield put(actions.createGameSuccess({...newGame, gameKey}))
   } catch (error) {
     yield put(actions.createGameError(error))
   }

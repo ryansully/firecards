@@ -35,7 +35,7 @@ export class NewGame extends Component {
     return (
       <div>
         {this.state.gameCreated && props.currentGame ? (
-          <Redirect to={`/game/${props.currentGame.key}`} />
+          <Redirect to={`/game/${props.currentGame.gameKey}`} />
         ) : (
           <PageContainer pageTitle="New Game" className="NewGame">
             <Header as="h2" icon="add" content="New Game" />
