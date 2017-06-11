@@ -1,16 +1,13 @@
 import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
-const newGame = {name: 'test'}
-const currentGame = {key: 'game_key'}
-const gameCreateError = Error('test')
-
-it('creates action to close the current game', () => {
-  expect(actions.closeCurrentGame()).toEqual({
-    type: ActionTypes.CURRENT_GAME_CLOSE
-  })
-})
+const gameKey = 'game_key'
+const currentGame = {gameKey}
+const error = Error('test')
+const currentGameError = error
+const gameCreateError = error
 
 it('creates action to request a created game', () => {
+  const newGame = {name: 'test'}
   expect(actions.createGameRequest(newGame)).toEqual({
     type: ActionTypes.GAME_CREATE_REQUEST,
     newGame
@@ -25,16 +22,25 @@ it('creates action to store a newly created game', () => {
 })
 
 it('creates action to handle game creation error', () => {
-  expect(actions.createGameError(gameCreateError)).toEqual({
+  expect(actions.createGameError(error)).toEqual({
     type: ActionTypes.GAME_CREATE_ERROR,
     gameCreateError
   })
 })
 
 it('creates action to load a game', () => {
-  expect(actions.loadCurrentGame(currentGame.key)).toEqual({
+  expect(actions.loadCurrentGame(gameKey)).toEqual({
     type: ActionTypes.CURRENT_GAME_LOAD,
-    gameKey: currentGame.key
+    gameKey
+  })
+})
+
+it('creates action to handle game load error', () => {
+  expect(actions.loadCurrentGameError(error)).toEqual({
+    type: ActionTypes.CURRENT_GAME_ERROR,
+    currentGameError
+  })
+})
   })
 })
 
@@ -49,6 +55,10 @@ it('selects current game from state', () => {
   expect(selectors.getCurrentGame({game: initialState})).toEqual(null)
 })
 
+it('selects current game error from state', () => {
+  expect(selectors.getCurrentGameError({game: initialState})).toEqual(null)
+})
+
 it('selects game create error from state', () => {
   expect(selectors.getGameCreateError({game: initialState})).toEqual(null)
 })
@@ -57,12 +67,11 @@ it('returns the initial state', () => {
   expect(reducer(undefined, {})).toEqual(initialState)
 })
 
-it('handles CURRENT_GAME_CLOSE action', () => {
+it('handles CURRENT_GAME_LOAD action', () => {
   expect(reducer({}, {
-    type: ActionTypes.CURRENT_GAME_CLOSE
-  })).toEqual({
-    currentGame: null
-  })
+    type: ActionTypes.CURRENT_GAME_LOAD,
+    currentGame
+  })).toEqual({currentGame})
 })
 
 it('handles CURRENT_GAME_SYNC action', () => {
@@ -77,6 +86,13 @@ it('handles GAME_CREATE_SUCCESS action', () => {
     type: ActionTypes.GAME_CREATE_SUCCESS,
     currentGame
   })).toEqual({currentGame})
+})
+
+it('handles CURRENT_GAME_ERROR action', () => {
+  expect(reducer({}, {
+    type: ActionTypes.CURRENT_GAME_ERROR,
+    currentGameError
+  })).toEqual({currentGameError})
 })
 
 it('handles GAME_CREATE_ERROR action', () => {

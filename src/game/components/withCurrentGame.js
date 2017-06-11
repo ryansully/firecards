@@ -34,6 +34,7 @@ const withCurrentGame = (WrappedComponent) => {
 
   const mapStateToProps = (state) => ({
     currentGame: gameSelectors.getCurrentGame(state),
+    currentGameError: gameSelectors.getCurrentGameError(state),
     gameCreateError: gameSelectors.getGameCreateError(state),
   })
 

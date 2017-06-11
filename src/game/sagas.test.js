@@ -7,21 +7,29 @@ import { selectors as authSelectors } from '../auth/dux'
 
 describe('closeCurrentGame saga', () => {
   const data = {}
-  data.gen = cloneableGenerator(sagas.closeCurrentGame)()
-  data.noChannel = data.gen.clone()
+  data.gen = sagas.closeCurrentGame()
+  data.noChannel = sagas.closeCurrentGame()
 
-  it('exits if the current game channel is null', () => {
+  it('does nothing if there is no current game channel', () => {
     expect(data.noChannel.next()).toEqual({
       value: undefined,
-      done: true
+      done: true,
     })
   })
 
-  it('dispatches an action that removes the current game from state', () => {
-    channels.currentGame = {
-      close: jest.fn()
-    }
-    expect(data.gen.next().value).toEqual(put(actions.closeCurrentGame()))
+  const close = jest.fn()
+
+  it('dispatches an action to sync the current game with null', () => {
+    channels.currentGame = {close}
+    expect(data.gen.next().value)
+      .toEqual(put(actions.syncCurrentGame(null)))
+  })
+
+  it('closes the current game channel', () => {
+    expect(close).toBeCalled()
+  })
+})
+
   })
 })
 
@@ -80,8 +88,8 @@ describe('createGame saga', () => {
   const key = 'game_key'
 
   it('dispatches action to store a newly created game', () => {
-    expect(data.gen.next(key).value)
-      .toEqual(put(actions.createGameSuccess({...newGame, key})))
+    expect(data.gen.next(gameKey).value)
+      .toEqual(put(actions.createGameSuccess({...newGame, gameKey})))
   })
 
   const error = Error('test')
@@ -92,37 +100,79 @@ describe('createGame saga', () => {
   })
 })
 
-describe('watchCurrentGame saga', () => {
-  const action = {gameKey: 'game_key'}
+describe('getGame saga', () => {
+  const gameKey = 'game_key'
+  const path = 'games/' + gameKey
+  const generator = sagas.getGame(gameKey)
+
+  it('calls reduxSagaFirebase.get to get game by gameKey', () => {
+    expect(generator.next().value).toEqual(call(reduxSagaFirebase.get, path))
+  })
+})
+
+describe('loadCurrentGame saga', () => {
+  const gameKey = 'game_key'
+  const action = {gameKey}
   const data = {}
-  const currentGame = {key: 'current_game_key'}
-  data.gen = cloneableGenerator(sagas.watchCurrentGame)(action)
+  data.gen = cloneableGenerator(sagas.loadCurrentGame)(action)
 
   it('selects current game from state', () => {
     expect(data.gen.next().value).toEqual(select(selectors.getCurrentGame))
   })
 
-  it('calls reduxSagaFirebase.channel', () => {
-    data.noCurrentGame = data.gen.clone()
+  const currentGame = {gameKey}
+
+  it('closes the current game first if there is one', () => {
+    data.currentGame = data.gen.clone()
+    expect(data.currentGame.next(currentGame).value)
+      .toEqual(call(sagas.closeCurrentGame))
+  })
+
+  it('calls getGame saga to get game by gameKey', () => {
+    expect(data.gen.next().value).toEqual(call(sagas.getGame, action.gameKey))
+  })
+
+  it('dispatches action to sync current game with database', () => {
     expect(data.gen.next(currentGame).value)
-      .toEqual(call(reduxSagaFirebase.channel, 'games/' + currentGame.key))
-    expect(data.noCurrentGame.next().value)
-      .toEqual(call(reduxSagaFirebase.channel, 'games/' + action.gameKey))
+      .toEqual(put(actions.syncCurrentGame(currentGame)))
+  })
+
+  it('calls watchCurrentGame saga to watch for changes to current game', () => {
+    expect(data.gen.next().value)
+      .toEqual(call(sagas.watchCurrentGame, {currentGame}))
+  })
+
+  const error = Error('test')
+
+  it('dispatches action when game creation error is thrown', () => {
+    expect(data.gen.throw(error).value)
+      .toEqual(put(actions.loadCurrentGameError(error)))
+  })
+})
+
+describe('watchCurrentGame saga', () => {
+  const gameKey = 'game_key'
+  const currentGame = {gameKey}
+  const action = {currentGame}
+  const generator = sagas.watchCurrentGame(action)
+
+  it('calls reduxSagaFirebase.channel', () => {
+    expect(generator.next(currentGame).value)
+      .toEqual(call(reduxSagaFirebase.channel, 'games/' + gameKey))
   })
 
   const channel = reduxSagaFirebase.channel('games/test')
 
   it('waits for channel event', () => {
-    expect(data.gen.next(channel).value).toEqual(take(channel))
-    expect(data.noCurrentGame.next(channel).value).toEqual(take(channel))
+    expect(generator.next(channel).value).toEqual(take(channel))
   })
 
   it('dispatches action to sync current game with database', () => {
-    expect(data.gen.next().value).toEqual(put(actions.syncCurrentGame({
-      key: currentGame.key
+    expect(generator.next().value).toEqual(put(actions.syncCurrentGame({
+      gameKey
     })))
-    expect(data.noCurrentGame.next().value)
-      .toEqual(put(actions.syncCurrentGame({key: action.gameKey})))
+  })
+})
   })
 })
 

@@ -4,13 +4,16 @@ import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
 
 export const channels = {
-  currentGame: null
+  currentGame: null,
 }
 
 export function* closeCurrentGame() {
-  if (!channels.currentGame) { return }
+  if (channels.currentGame) {
   channels.currentGame.close()
-  yield put(actions.closeCurrentGame())
+    yield put(actions.syncCurrentGame(null))
+  }
+}
+}
 }
 
 export function* createGame(action) {
@@ -36,26 +39,50 @@ export function* createGame(action) {
   }
 }
 
-export function* watchCurrentGame(action) {
+export function* getGame(gameKey) {
+  const path = 'games/' + gameKey
+  return yield call(reduxSagaFirebase.get, path)
+}
+
+export function* loadCurrentGame(action) {
+  try {
   let currentGame = yield select(selectors.getCurrentGame)
 
-  if (!currentGame) {
-    // use game from game key in action
-    currentGame = {key: action.gameKey}
+    if (currentGame) {
+      // stop listening to current game changes
+      yield call(sagas.closeCurrentGame)
   }
 
-  const path = 'games/' + currentGame.key
+    currentGame = yield call(sagas.getGame, action.gameKey)
+    currentGame.gameKey = action.gameKey
+
+    // sync current game to state
+    yield put(actions.syncCurrentGame(currentGame))
+    yield call(sagas.watchCurrentGame, {currentGame})
+  } catch (error) {
+    yield put(actions.loadCurrentGameError(error))
+  }
+}
+
+export function* watchCurrentGame(action) {
+  const { currentGame } = action
+  const { gameKey } = currentGame
+  const path = 'games/' + gameKey
   channels.currentGame = yield call(reduxSagaFirebase.channel, path)
 
   while (true) {
     const game = yield take(channels.currentGame)
-    yield put(actions.syncCurrentGame({...game, key: currentGame.key}))
+    yield put(actions.syncCurrentGame({...game, gameKey}))
+  }
+}
   }
 }
 
 export const sagas = {
   closeCurrentGame,
   createGame,
+  getGame,
+  loadCurrentGame,
   watchCurrentGame,
 }
 
