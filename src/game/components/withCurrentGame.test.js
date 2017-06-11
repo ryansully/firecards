@@ -34,7 +34,38 @@ it('renders a wrapped component with props', () => {
   )
 })
 
-it('dispatches a game load action when currentGame is falsy', () => {
+it('does not dispatch game load action if there is no route param', () => {
+  const WrappedComponent = withCurrentGame(props => null)
+
+  mount(
+    <Provider store={store}>
+      <WrappedComponent />
+    </Provider>
+  )
+
+  const actions = store.getActions()
+  expect(actions.length).toEqual(0)
+})
+
+it('does not dispatch if current game has matching key from params', () => {
+  const currentGame = {gameKey: 'game_key'}
+  store = mockStore({game: {
+    ...initialState,
+    currentGame
+  }})
+  const WrappedComponent = withCurrentGame(props => null)
+
+  mount(
+    <Provider store={store}>
+      <WrappedComponent match={match} />
+    </Provider>
+  )
+
+  const actions = store.getActions()
+  expect(actions.length).toEqual(0)
+})
+
+it('dispatches a game load action from route param', () => {
   const WrappedComponent = withCurrentGame(props => null)
 
   mount(
@@ -46,20 +77,4 @@ it('dispatches a game load action when currentGame is falsy', () => {
   const actions = store.getActions()
   expect(actions.length).toEqual(1)
   expect(actions[0]).toEqual(gameActions.loadCurrentGame('game_key'))
-})
-
-it('does not dispatch a game load action when currentGame exists', () => {
-  store = mockStore({game: {currentGame: {}}})
-  const PropsChecker = withCurrentGame((props) => {
-    expect(props.currentGame).toEqual({})
-    return null
-  })
-
-  mount(
-    <Provider store={store}>
-      <PropsChecker />
-    </Provider>
-  )
-
-  expect(store.getActions().length).toEqual(0)
 })

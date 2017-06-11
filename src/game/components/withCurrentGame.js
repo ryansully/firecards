@@ -12,8 +12,18 @@ const withCurrentGame = (WrappedComponent) => {
     static displayName = `withCurrentGame(${wrappedComponentName})`
 
     componentDidMount() {
-      if (!this.props.currentGame && this.props.match.params.game_key) {
-        this.props.loadCurrentGame(this.props.match.params.game_key)
+      const { currentGame, match } = this.props
+
+      // get game key from route params
+      const gameKey = match ? match.params.game_key : null
+
+      // if new game was just created, use existing currentGame
+      // instead of loading from database
+      if (currentGame && currentGame.gameKey === gameKey) { return }
+
+      // load game from database using game key from route params
+      if (gameKey) {
+        this.props.loadCurrentGame(gameKey)
       }
     }
 
