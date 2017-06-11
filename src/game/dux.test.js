@@ -5,6 +5,7 @@ const currentGame = {gameKey}
 const error = Error('test')
 const currentGameError = error
 const gameCreateError = error
+const myGames = []
 
 it('creates action to request a created game', () => {
   const newGame = {name: 'test'}
@@ -41,6 +42,12 @@ it('creates action to handle game load error', () => {
     currentGameError
   })
 })
+
+it('creates action to load my games', () => {
+  const authUser = {uid: 'uid'}
+  expect(actions.loadMyGames(authUser)).toEqual({
+    type: ActionTypes.MY_GAMES_LOAD,
+    authUser
   })
 })
 
@@ -48,6 +55,13 @@ it('creates action to sync the current game', () => {
   expect(actions.syncCurrentGame(currentGame)).toEqual({
     type: ActionTypes.CURRENT_GAME_SYNC,
     currentGame
+  })
+})
+
+it('creates action to sync my games', () => {
+  expect(actions.syncMyGames(myGames)).toEqual({
+    type: ActionTypes.MY_GAMES_SYNC,
+    myGames
   })
 })
 
@@ -61,6 +75,10 @@ it('selects current game error from state', () => {
 
 it('selects game create error from state', () => {
   expect(selectors.getGameCreateError({game: initialState})).toEqual(null)
+})
+
+it('selects my games from state', () => {
+  expect(selectors.getMyGames({game: initialState})).toEqual([])
 })
 
 it('returns the initial state', () => {
@@ -100,4 +118,11 @@ it('handles GAME_CREATE_ERROR action', () => {
     type: ActionTypes.GAME_CREATE_ERROR,
     gameCreateError
   })).toEqual({gameCreateError})
+})
+
+it('handles MY_GAMES_SYNC action', () => {
+  expect(reducer({}, {
+    type: ActionTypes.MY_GAMES_SYNC,
+    myGames
+  })).toEqual({myGames})
 })

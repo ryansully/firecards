@@ -5,30 +5,33 @@ export const ActionTypes = {
   GAME_CREATE_ERROR: 'game/GAME_CREATE_ERROR',
   GAME_CREATE_REQUEST: 'game/GAME_CREATE_REQUEST',
   GAME_CREATE_SUCCESS: 'game/GAME_CREATE_SUCCESS',
-  GAME_CREATE_ERROR: 'game/GAME_CREATE_ERROR',
+  MY_GAMES_LOAD: 'game/MY_GAMES_LOAD',
+  MY_GAMES_SYNC: 'game/MY_GAMES_SYNC',
 }
 
 export const actions = {
-  closeCurrentGame: () => ({type: ActionTypes.CURRENT_GAME_CLOSE}),
   createGameRequest: (newGame) => ({type: ActionTypes.GAME_CREATE_REQUEST, newGame}),
   createGameSuccess: (currentGame) => ({type: ActionTypes.GAME_CREATE_SUCCESS, currentGame}),
   createGameError: (gameCreateError) => ({type: ActionTypes.GAME_CREATE_ERROR, gameCreateError}),
   loadCurrentGame: (gameKey) => ({type: ActionTypes.CURRENT_GAME_LOAD, gameKey}),
   loadCurrentGameError: (currentGameError) => ({type: ActionTypes.CURRENT_GAME_ERROR, currentGameError}),
+  loadMyGames: (authUser) => ({type: ActionTypes.MY_GAMES_LOAD, authUser}),
   syncCurrentGame: (currentGame) => ({type: ActionTypes.CURRENT_GAME_SYNC, currentGame}),
+  syncMyGames: (myGames) => ({type: ActionTypes.MY_GAMES_SYNC, myGames}),
 }
 
 export const selectors = {
-  getGameCreateError: (state) => state.game.gameCreateError,
   getCurrentGame: (state) => state.game.currentGame,
   getCurrentGameError: (state) => state.game.currentGameError,
   getGameCreateError: (state) => state.game.gameCreateError,
+  getMyGames: (state) => state.game.myGames,
 }
 
 export const initialState = {
   currentGame: null,
   currentGameError: null,
   gameCreateError: null,
+  myGames: [],
 }
 
 export default function reducer(state = initialState, action) {
@@ -49,6 +52,11 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         gameCreateError: action.gameCreateError
+      }
+    case ActionTypes.MY_GAMES_SYNC:
+      return {
+        ...state,
+        myGames: action.myGames
       }
     default:
       return state

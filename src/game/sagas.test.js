@@ -1,6 +1,7 @@
+import { buffers } from 'redux-saga'
 import { all, call, put, select, take, takeEvery } from 'redux-saga/effects'
 import { cloneableGenerator } from 'redux-saga/utils'
-import firebase, { reduxSagaFirebase } from '../firebase'
+import firebase, { reduxSagaFirebase, firebaseSagaHelper } from '../firebase'
 import root, { sagas, channels } from './sagas'
 import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
@@ -30,6 +31,28 @@ describe('closeCurrentGame saga', () => {
   })
 })
 
+describe('closeMyGames saga', () => {
+  const data = {}
+  data.gen = sagas.closeMyGames()
+  data.noChannel = sagas.closeMyGames()
+
+  it('does nothing if there is no myGames channel', () => {
+    expect(data.noChannel.next()).toEqual({
+      value: undefined,
+      done: true,
+    })
+  })
+
+  const close = jest.fn()
+
+  it('dispatches an action to sync myGames with null', () => {
+    channels.myGames = {close}
+    expect(data.gen.next().value)
+      .toEqual(put(actions.syncMyGames(null)))
+  })
+
+  it('closes the current game channel', () => {
+    expect(close).toBeCalled()
   })
 })
 
@@ -85,7 +108,7 @@ describe('createGame saga', () => {
       .toEqual(call(reduxSagaFirebase.create, 'games', newGameNoName))
   })
 
-  const key = 'game_key'
+  const gameKey = 'game_key'
 
   it('dispatches action to store a newly created game', () => {
     expect(data.gen.next(gameKey).value)
@@ -173,6 +196,56 @@ describe('watchCurrentGame saga', () => {
     })))
   })
 })
+
+describe('watchMyGames saga', () => {
+  const authUser = {uid: 'uid'}
+  const action = {authUser}
+  const data = {}
+  data.gen = sagas.watchMyGames(action)
+  data.noAuthUser = sagas.watchMyGames({authUser: null})
+
+  const path = `users/${authUser.uid}/games`
+
+  it('calls sagas.closeMyGames if there is no auth user', () => {
+    expect(data.noAuthUser.next().value).toEqual(call(sagas.closeMyGames))
+  })
+
+  it('calls custom channel', () => {
+    const nextValue = data.gen.next().value
+    expect(nextValue.CALL.fn).toEqual(firebaseSagaHelper.channel)
+    expect(nextValue.CALL.args[0]).toEqual(path)
+    expect(nextValue.CALL.args[1]).toEqual('child_added')
+  })
+
+  const channel = firebaseSagaHelper.channel(path, 'child_added', true,
+    buffers.expanding())
+
+  it('waits for channel event', () => {
+    expect(data.gen.next(channel).value).toEqual(take(channel))
+  })
+
+  const gameKey = 'game_key'
+  const snapshot = {key: gameKey}
+
+  it('calls getGame saga to get game by gameKey', () => {
+    expect(data.gen.next({snapshot}).value)
+      .toEqual(call(sagas.getGame, gameKey))
+  })
+
+  const game = {name: 'test'}
+
+  it('selects my games from state', () => {
+    expect(data.gen.next(game).value).toEqual(select(selectors.getMyGames))
+  })
+
+  const myGames = []
+
+  it('dispatches an action to sync myGames', () => {
+
+    expect(data.gen.next(myGames).value).toEqual(put(actions.syncMyGames([
+      {gameKey, name: game.name},
+      ...myGames,
+    ])))
   })
 })
 
@@ -181,9 +254,10 @@ describe('root saga', () => {
 
   it('yields an array of sagas', () => {
     expect(generator.next().value).toEqual(all([
+      takeEvery(ActionTypes.CURRENT_GAME_LOAD, sagas.loadCurrentGame),
       takeEvery(ActionTypes.GAME_CREATE_REQUEST, sagas.createGame),
       takeEvery(ActionTypes.GAME_CREATE_SUCCESS, sagas.watchCurrentGame),
-      takeEvery(ActionTypes.CURRENT_GAME_LOAD, sagas.watchCurrentGame),
+      takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.watchMyGames),
   ]))
   })
 })

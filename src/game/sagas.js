@@ -1,19 +1,26 @@
+import { buffers } from 'redux-saga'
 import { all, call, put, select, take, takeEvery } from 'redux-saga/effects'
-import firebase, { reduxSagaFirebase } from '../firebase'
+import firebase, { reduxSagaFirebase, firebaseSagaHelper } from '../firebase'
 import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
 
 export const channels = {
   currentGame: null,
+  myGames: null,
 }
 
 export function* closeCurrentGame() {
   if (channels.currentGame) {
-  channels.currentGame.close()
+    channels.currentGame.close()
     yield put(actions.syncCurrentGame(null))
   }
 }
-}
+
+export function* closeMyGames() {
+  if (channels.myGames) {
+    channels.myGames.close()
+    yield put(actions.syncMyGames(null))
+  }
 }
 
 export function* createGame(action) {
@@ -46,12 +53,12 @@ export function* getGame(gameKey) {
 
 export function* loadCurrentGame(action) {
   try {
-  let currentGame = yield select(selectors.getCurrentGame)
+    let currentGame = yield select(selectors.getCurrentGame)
 
     if (currentGame) {
       // stop listening to current game changes
       yield call(sagas.closeCurrentGame)
-  }
+    }
 
     currentGame = yield call(sagas.getGame, action.gameKey)
     currentGame.gameKey = action.gameKey
@@ -75,21 +82,44 @@ export function* watchCurrentGame(action) {
     yield put(actions.syncCurrentGame({...game, gameKey}))
   }
 }
+
+export function* watchMyGames(action) {
+  const { authUser } = action
+  if (authUser) {
+    const path = `users/${authUser.uid}/games`
+    channels.myGames = yield call(firebaseSagaHelper.channel, path,
+      'child_added', true, buffers.expanding())
+
+    while (true) {
+      const { snapshot } = yield take(channels.myGames)
+      const gameKey = snapshot.key
+      const game = yield call(sagas.getGame, gameKey)
+      const myGames = yield select(selectors.getMyGames)
+      yield put(actions.syncMyGames([
+        {gameKey, name: game.name},
+        ...myGames,
+      ]))
+    }
+  } else {
+    yield call(sagas.closeMyGames)
   }
 }
 
 export const sagas = {
   closeCurrentGame,
+  closeMyGames,
   createGame,
   getGame,
   loadCurrentGame,
   watchCurrentGame,
+  watchMyGames,
 }
 
 export default function* root() {
   yield all([
+    takeEvery(ActionTypes.CURRENT_GAME_LOAD, sagas.loadCurrentGame),
     takeEvery(ActionTypes.GAME_CREATE_REQUEST, sagas.createGame),
     takeEvery(ActionTypes.GAME_CREATE_SUCCESS, sagas.watchCurrentGame),
-    takeEvery(ActionTypes.CURRENT_GAME_LOAD, sagas.watchCurrentGame),
+    takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.watchMyGames),
   ])
 }
