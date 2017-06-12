@@ -52,9 +52,9 @@ describe('channel(pathOrRef, event, buffer, snapshot)', () => {
     expect(ref.on.mock.calls[0][0]).toBe('value')
   })
 
-  it('emits snapshot value', () => {
-    const valueMock = 'snapshot value'
-    const val = jest.fn(() => valueMock)
+  it('emits snapshot data', () => {
+    const dataMock = 'snapshot data'
+    const val = jest.fn(() => dataMock)
     const snapshot = { val }
     const subs = []
     ref.on = jest.fn((eventType, callback) => {
@@ -69,16 +69,16 @@ describe('channel(pathOrRef, event, buffer, snapshot)', () => {
     const event = 'event'
     const channel = dbModule.channel.call(context, path, event)
 
-    const spy = ({ value }) => {
-      expect(value).toEqual(valueMock)
+    const spy = ({ data }) => {
+      expect(data).toEqual(dataMock)
     }
     channel.take(spy)
     emit(snapshot)
   })
 
   it('emits snapshot', () => {
-    const valueMock = 'snapshot value'
-    const val = jest.fn(() => valueMock)
+    const dataMock = 'snapshot data'
+    const val = jest.fn(() => dataMock)
     const dataSnapshot = { val }
     const subs = []
     ref.on = jest.fn((eventType, callback) => {

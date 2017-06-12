@@ -10,7 +10,7 @@ function channel(pathOrRef, event = 'value', returnSnapshot = false, buffer = bu
       event,
       dataSnapshot => emit(returnSnapshot
         ? { snapshot: dataSnapshot }
-        : { value: dataSnapshot.val() }
+        : { data: dataSnapshot.val() }
       )
     )
     return () => ref.off(event, callback)
