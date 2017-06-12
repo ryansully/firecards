@@ -55,7 +55,7 @@ describe('channel(pathOrRef, event, buffer, snapshot)', () => {
   it('emits snapshot data', () => {
     const dataMock = 'snapshot data'
     const val = jest.fn(() => dataMock)
-    const snapshot = { val }
+    const dataSnapshot = { val }
     const subs = []
     ref.on = jest.fn((eventType, callback) => {
       subs.push({eventType, callback})
@@ -73,7 +73,7 @@ describe('channel(pathOrRef, event, buffer, snapshot)', () => {
       expect(data).toEqual(dataMock)
     }
     channel.take(spy)
-    emit(snapshot)
+    emit(dataSnapshot)
   })
 
   it('emits snapshot', () => {
