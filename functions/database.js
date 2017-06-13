@@ -12,6 +12,9 @@ const setGameToUser = functions.database.ref('/games/{game_key}')
         // exit if user is not in database
         if (!snapshot.exists()) { return }
 
+        // exit if game is already set to user and game is not deleted
+        if (snapshot.hasChild('games/' + gameKey) && value) { return }
+
         console.log('USER GAME SET', uid, game)
         return snapshot.ref.child('games').update({[gameKey]: value})
       })
