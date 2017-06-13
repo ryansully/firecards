@@ -4,7 +4,7 @@ import { Header } from 'semantic-ui-react'
 import { PageContainer, withCurrentGame } from '../../components'
 import { selectors as authSelectors } from '../../auth/dux'
 
-export class CurrentGame extends Component {
+export class PlayGame extends Component {
   componentWillReceiveProps(nextProps) {
     const { authUser, currentGame } = nextProps
     if (authUser && currentGame) {
@@ -16,7 +16,7 @@ export class CurrentGame extends Component {
     const { currentGame } = this.props
     const pageTitle = currentGame ? currentGame.name : ''
     return (
-      <PageContainer pageTitle={pageTitle} className="CurrentGame" loading={!currentGame}>
+      <PageContainer pageTitle={pageTitle} className="PlayGame" loading={!currentGame}>
         {currentGame &&
           <div>
             <Header as="h2" icon="game" content={currentGame.name} />
@@ -31,4 +31,4 @@ const mapStateToProps = (state) => ({
   authUser: authSelectors.getAuthUser(state),
 })
 
-export default withCurrentGame(connect(mapStateToProps)(CurrentGame))
+export default withCurrentGame(connect(mapStateToProps)(PlayGame))

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { ui, uiConfig } from './firebase'
 import { actions as authActions, selectors as authSelectors } from './auth/dux'
-import { Home, NewGame, CurrentGame } from './routes'
+import { Home, NewGame, PlayGame } from './routes'
 import { FirebaseUIAuth } from './components'
 
 import './App.css'
@@ -17,7 +17,7 @@ export const App = ({ authUser }) => {
           <Route exact path="/" component={Home} />
           <Switch>
             <Route path="/game/new" component={NewGame} />
-            <Route path="/game/:game_key" component={CurrentGame} />
+            <Route path="/game/:game_key" component={PlayGame} />
           </Switch>
         </div>
       ) : (
