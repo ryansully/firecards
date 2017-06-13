@@ -1,5 +1,6 @@
 import reducer, { actions, ActionTypes, selectors, initialState } from './dux'
 
+const authUser = {uid: 'uid'}
 const gameKey = 'game_key'
 const currentGame = {gameKey}
 const error = Error('test')
@@ -44,7 +45,6 @@ it('creates action to handle game load error', () => {
 })
 
 it('creates action to load my games', () => {
-  const authUser = {uid: 'uid'}
   expect(actions.loadMyGames(authUser)).toEqual({
     type: ActionTypes.MY_GAMES_LOAD,
     authUser
@@ -62,6 +62,14 @@ it('creates action to sync my games', () => {
   expect(actions.syncMyGames(myGames)).toEqual({
     type: ActionTypes.MY_GAMES_SYNC,
     myGames
+  })
+})
+
+it('creates action to update last played timestamp', () => {
+  expect(actions.updateLastPlayed(authUser.uid, gameKey)).toEqual({
+    type: ActionTypes.LAST_PLAYED_UPDATE,
+    authUid: authUser.uid,
+    gameKey
   })
 })
 

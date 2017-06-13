@@ -5,6 +5,7 @@ export const ActionTypes = {
   GAME_CREATE_ERROR: 'game/GAME_CREATE_ERROR',
   GAME_CREATE_REQUEST: 'game/GAME_CREATE_REQUEST',
   GAME_CREATE_SUCCESS: 'game/GAME_CREATE_SUCCESS',
+  LAST_PLAYED_UPDATE: 'game/LAST_PLAYED_UPDATE',
   MY_GAMES_LOAD: 'game/MY_GAMES_LOAD',
   MY_GAMES_SYNC: 'game/MY_GAMES_SYNC',
 }
@@ -18,6 +19,7 @@ export const actions = {
   loadMyGames: (authUser) => ({type: ActionTypes.MY_GAMES_LOAD, authUser}),
   syncCurrentGame: (currentGame) => ({type: ActionTypes.CURRENT_GAME_SYNC, currentGame}),
   syncMyGames: (myGames) => ({type: ActionTypes.MY_GAMES_SYNC, myGames}),
+  updateLastPlayed: (authUid, gameKey) => ({type: ActionTypes.LAST_PLAYED_UPDATE, authUid, gameKey})
 }
 
 export const selectors = {

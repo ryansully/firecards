@@ -71,6 +71,13 @@ export function* loadCurrentGame(action) {
   }
 }
 
+export function* updateLastPlayed(action) {
+  const path = `users/${action.authUid}/games/${action.gameKey}`
+  return yield call(reduxSagaFirebase.update, path, {
+    lastPlayedAt: firebase.database.ServerValue.TIMESTAMP,
+  })
+}
+
 export function* watchCurrentGame(action) {
   const { currentGame } = action
   const { gameKey } = currentGame
@@ -111,6 +118,7 @@ export const sagas = {
   createGame,
   getGame,
   loadCurrentGame,
+  updateLastPlayed,
   watchCurrentGame,
   watchMyGames,
 }
@@ -120,6 +128,7 @@ export default function* root() {
     takeEvery(ActionTypes.CURRENT_GAME_LOAD, sagas.loadCurrentGame),
     takeEvery(ActionTypes.GAME_CREATE_REQUEST, sagas.createGame),
     takeEvery(ActionTypes.GAME_CREATE_SUCCESS, sagas.watchCurrentGame),
+    takeEvery(ActionTypes.LAST_PLAYED_UPDATE, sagas.updateLastPlayed),
     takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.watchMyGames),
   ])
 }

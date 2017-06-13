@@ -173,6 +173,22 @@ describe('loadCurrentGame saga', () => {
   })
 })
 
+describe('updateLastPlayed saga', () => {
+  const action = {
+    authUid: 'uid',
+    gameKey: 'game_key',
+  }
+  const generator = sagas.updateLastPlayed(action)
+
+  const path = `users/${action.authUid}/games/${action.gameKey}`
+
+  it('calls reduxSagaFirebase.update to update last played timestamp', () => {
+    expect(generator.next().value).toEqual(call(reduxSagaFirebase.update, path,
+      {lastPlayedAt: firebase.database.ServerValue.TIMESTAMP}
+    ))
+  })
+})
+
 describe('watchCurrentGame saga', () => {
   const gameKey = 'game_key'
   const currentGame = {gameKey}
@@ -257,6 +273,7 @@ describe('root saga', () => {
       takeEvery(ActionTypes.CURRENT_GAME_LOAD, sagas.loadCurrentGame),
       takeEvery(ActionTypes.GAME_CREATE_REQUEST, sagas.createGame),
       takeEvery(ActionTypes.GAME_CREATE_SUCCESS, sagas.watchCurrentGame),
+      takeEvery(ActionTypes.LAST_PLAYED_UPDATE, sagas.updateLastPlayed),
       takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.watchMyGames),
   ]))
   })
