@@ -40,20 +40,22 @@ describe('watchCurrentUser saga', () => {
     expect(data.noAuthUser.next().value).toEqual(call(sagas.closeCurrentUser))
   })
 
-  it('calls reduxSagaFirebase.channel', () => {
+  it('calls reduxSagaFirebase.database.channel', () => {
     expect(data.gen.next({uid: 'test'}).value)
-      .toEqual(call(reduxSagaFirebase.channel, 'users/test'))
+      .toEqual(call(reduxSagaFirebase.database.channel, 'users/test'))
   })
 
-  const channel = reduxSagaFirebase.channel('users/test')
+  const channel = reduxSagaFirebase.database.channel('users/test')
 
   it('waits for channel event', () => {
     expect(data.gen.next(channel).value).toEqual(take(channel))
   })
 
+  const currentUser = {providerUid: 'uid'}
+
   it('dispatches an action to sync the current user', () => {
-    expect(data.gen.next(authUser).value)
-      .toEqual(put(actions.syncCurrentUser(authUser)))
+    expect(data.gen.next({value: currentUser}).value)
+      .toEqual(put(actions.syncCurrentUser(currentUser)))
   })
 })
 

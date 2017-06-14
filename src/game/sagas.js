@@ -39,7 +39,8 @@ export function* createGame(action) {
     createdAt: firebase.database.ServerValue.TIMESTAMP,
   }
   try {
-    const gameKey = yield call(reduxSagaFirebase.create, 'games', newGame)
+    const gameKey = yield call(reduxSagaFirebase.database.create, 'games',
+      newGame)
     yield put(actions.createGameSuccess({...newGame, gameKey}))
   } catch (error) {
     yield put(actions.createGameError(error))
@@ -48,7 +49,7 @@ export function* createGame(action) {
 
 export function* getGame(gameKey) {
   const path = 'games/' + gameKey
-  return yield call(reduxSagaFirebase.get, path)
+  return yield call(reduxSagaFirebase.database.read, path)
 }
 
 export function* loadCurrentGame(action) {
@@ -73,7 +74,7 @@ export function* loadCurrentGame(action) {
 
 export function* updateLastPlayed(action) {
   const path = `users/${action.authUid}/games/${action.gameKey}`
-  return yield call(reduxSagaFirebase.update, path, {
+  return yield call(reduxSagaFirebase.database.update, path, {
     lastPlayedAt: firebase.database.ServerValue.TIMESTAMP,
   })
 }
@@ -82,11 +83,11 @@ export function* watchCurrentGame(action) {
   const { currentGame } = action
   const { gameKey } = currentGame
   const path = 'games/' + gameKey
-  channels.currentGame = yield call(reduxSagaFirebase.channel, path)
+  channels.currentGame = yield call(reduxSagaFirebase.database.channel, path)
 
   while (true) {
-    const game = yield take(channels.currentGame)
-    yield put(actions.syncCurrentGame({...game, gameKey}))
+    const { value } = yield take(channels.currentGame)
+    yield put(actions.syncCurrentGame({...value, gameKey}))
   }
 }
 

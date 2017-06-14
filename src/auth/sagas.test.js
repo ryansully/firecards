@@ -6,19 +6,19 @@ import root, { sagas } from './sagas'
 describe('signOut saga', () => {
   const generator = sagas.signOut()
 
-  it('calls reduxSagaFirebase.logout', () => {
-    expect(generator.next().value).toEqual(call(reduxSagaFirebase.logout))
+  it('calls reduxSagaFirebase.auth.signOut', () => {
+    expect(generator.next().value).toEqual(call(reduxSagaFirebase.auth.signOut))
   })
 })
 
 describe('watchAuthStateChange saga', () => {
   const generator = sagas.watchAuthStateChange()
 
-  it('calls reduxSagaFirebase.authChannel', () => {
-    expect(generator.next().value).toEqual(call(reduxSagaFirebase.authChannel))
+  it('calls reduxSagaFirebase.auth.channel', () => {
+    expect(generator.next().value).toEqual(call(reduxSagaFirebase.auth.channel))
   })
 
-  const channel = reduxSagaFirebase.authChannel()
+  const channel = reduxSagaFirebase.auth.channel()
 
   it('waits for channel event', () => {
     expect(generator.next(channel).value).toEqual(take(channel))

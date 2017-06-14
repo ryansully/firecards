@@ -101,11 +101,11 @@ describe('createGame saga', () => {
     name: `${authUser.displayName}'s Game`
   }
 
-  it('calls reduxSagaFirebase.create to push new game', () => {
+  it('calls reduxSagaFirebase.database.create to push new game', () => {
     expect(data.gen.next(authUser).value)
-      .toEqual(call(reduxSagaFirebase.create, 'games', newGame))
+      .toEqual(call(reduxSagaFirebase.database.create, 'games', newGame))
     expect(data.noName.next(authUser).value)
-      .toEqual(call(reduxSagaFirebase.create, 'games', newGameNoName))
+      .toEqual(call(reduxSagaFirebase.database.create, 'games', newGameNoName))
   })
 
   const gameKey = 'game_key'
@@ -129,7 +129,8 @@ describe('getGame saga', () => {
   const generator = sagas.getGame(gameKey)
 
   it('calls reduxSagaFirebase.get to get game by gameKey', () => {
-    expect(generator.next().value).toEqual(call(reduxSagaFirebase.get, path))
+    expect(generator.next().value)
+      .toEqual(call(reduxSagaFirebase.database.read, path))
   })
 })
 
@@ -182,10 +183,11 @@ describe('updateLastPlayed saga', () => {
 
   const path = `users/${action.authUid}/games/${action.gameKey}`
 
-  it('calls reduxSagaFirebase.update to update last played timestamp', () => {
-    expect(generator.next().value).toEqual(call(reduxSagaFirebase.update, path,
-      {lastPlayedAt: firebase.database.ServerValue.TIMESTAMP}
-    ))
+  it('calls reduxSagaFirebase.database.update to update timestamp', () => {
+    expect(generator.next().value)
+      .toEqual(call(reduxSagaFirebase.database.update, path,
+        {lastPlayedAt: firebase.database.ServerValue.TIMESTAMP}
+      ))
   })
 })
 
@@ -195,21 +197,20 @@ describe('watchCurrentGame saga', () => {
   const action = {currentGame}
   const generator = sagas.watchCurrentGame(action)
 
-  it('calls reduxSagaFirebase.channel', () => {
+  it('calls reduxSagaFirebase.database.channel', () => {
     expect(generator.next(currentGame).value)
-      .toEqual(call(reduxSagaFirebase.channel, 'games/' + gameKey))
+      .toEqual(call(reduxSagaFirebase.database.channel, 'games/' + gameKey))
   })
 
-  const channel = reduxSagaFirebase.channel('games/test')
+  const channel = reduxSagaFirebase.database.channel('games/test')
 
   it('waits for channel event', () => {
     expect(generator.next(channel).value).toEqual(take(channel))
   })
 
   it('dispatches action to sync current game with database', () => {
-    expect(generator.next().value).toEqual(put(actions.syncCurrentGame({
-      gameKey
-    })))
+    expect(generator.next(currentGame).value)
+      .toEqual(put(actions.syncCurrentGame(currentGame)))
   })
 })
 
@@ -257,7 +258,6 @@ describe('watchMyGames saga', () => {
   const myGames = []
 
   it('dispatches an action to sync myGames', () => {
-
     expect(data.gen.next(myGames).value).toEqual(put(actions.syncMyGames([
       {gameKey, name: game.name},
       ...myGames,

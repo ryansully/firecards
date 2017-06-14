@@ -4,11 +4,11 @@ import { actions, ActionTypes } from './dux'
 
 export function* signOut() {
   // sign out user from Firebase
-  yield call(reduxSagaFirebase.logout)
+  yield call(reduxSagaFirebase.auth.signOut)
 }
 
 export function* watchAuthStateChange() {
-  const channel = yield call(reduxSagaFirebase.authChannel)
+  const channel = yield call(reduxSagaFirebase.auth.channel)
 
   while (true) {
     const { user } = yield take(channel)

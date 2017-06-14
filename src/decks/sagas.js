@@ -5,7 +5,8 @@ import { reduxSagaFirebase } from '../firebase'
 function* getDeckIndex() {
   while (true) {
     yield take(ActionTypes.DECK_INDEX_REQUEST)
-    const deckIndex = yield call(reduxSagaFirebase.get, '/decks/!index')
+    const path = '/decks/!index'
+    const deckIndex = yield call(reduxSagaFirebase.database.read, path)
     const { '!order': deckOrder, ...deckList } = deckIndex
     yield put(actions.storeDeckList(deckList))
     yield put(actions.storeDeckOrder(deckOrder))

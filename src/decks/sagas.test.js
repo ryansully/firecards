@@ -11,9 +11,11 @@ describe('getDeckIndex saga', () => {
     expect(generator.next().value).toEqual(take(ActionTypes.DECK_INDEX_REQUEST))
   })
 
+  const path = '/decks/!index'
+
   it('gets a deck index from the database', () => {
     expect(generator.next().value)
-      .toEqual(call(reduxSagaFirebase.get, '/decks/!index'))
+      .toEqual(call(reduxSagaFirebase.database.read, path))
   })
 
   it('dispatches an action that stores a deck list', () => {

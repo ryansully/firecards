@@ -19,11 +19,11 @@ export function* watchCurrentUser(action) {
 
   if (authUser) {
     const path = 'users/' + authUser.uid
-    channels.currentUser = yield call(reduxSagaFirebase.channel, path)
+    channels.currentUser = yield call(reduxSagaFirebase.database.channel, path)
 
     while (true) {
-      const currentUser = yield take(channels.currentUser)
-      yield put(actions.syncCurrentUser(currentUser))
+      const { value } = yield take(channels.currentUser)
+      yield put(actions.syncCurrentUser(value))
     }
   } else {
     yield call(sagas.closeCurrentUser)
