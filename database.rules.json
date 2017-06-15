@@ -10,7 +10,7 @@
       ".read": "!root.child('banned/'+auth.uid).exists()",
       // only admins can create and modify any game
       ".write": "root.child('admins/'+auth.uid).exists()",
-      "$game_id": {
+      "$game_key": {
         // guests can create new games, but only the host can modify
         ".write": "root.child('guests/'+auth.uid).exists() && (newData.child('host').val() === auth.uid || data.child('host').val() === auth.uid)"
       }
@@ -19,7 +19,13 @@
       // only logged-in unbanned users can see users
       ".read": "auth != null && !root.child('banned/'+auth.uid).exists()",
       // only admins can modify any user
-      ".write": "root.child('admins/'+auth.uid).exists()"
+      ".write": "root.child('admins/'+auth.uid).exists()",
+      "$uid": {
+        "games": {
+          // only logged-in users can modify their own games
+          ".write": "auth != null && auth.uid == $uid"
+        }
+      }
     }
   }
 }
