@@ -218,7 +218,7 @@ describe('watchMyGames saga', () => {
   const authUser = {uid: 'uid'}
   const action = {authUser}
   const data = {}
-  data.gen = sagas.watchMyGames(action)
+  data.gen = cloneableGenerator(sagas.watchMyGames)(action)
   data.noAuthUser = sagas.watchMyGames({authUser: null})
 
   const path = `users/${authUser.uid}/games`
@@ -250,6 +250,13 @@ describe('watchMyGames saga', () => {
   })
 
   const game = {name: 'test'}
+
+  it('deletes game index from user if there is no game', () => {
+    data.noGame = data.gen.clone()
+    const deletePath = `${path}/${gameKey}`
+    expect(data.noGame.next(null).value)
+      .toEqual(call(reduxSagaFirebase.database.delete, deletePath))
+  })
 
   it('selects my games from state', () => {
     expect(data.gen.next(game).value).toEqual(select(selectors.getMyGames))

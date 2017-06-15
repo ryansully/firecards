@@ -102,11 +102,17 @@ export function* watchMyGames(action) {
       const { snapshot } = yield take(channels.myGames)
       const gameKey = snapshot.key
       const game = yield call(sagas.getGame, gameKey)
-      const myGames = yield select(selectors.getMyGames)
-      yield put(actions.syncMyGames([
-        {gameKey, name: game.name},
-        ...myGames,
-      ]))
+      if (game) {
+        const myGames = yield select(selectors.getMyGames)
+        yield put(actions.syncMyGames([
+          {gameKey, name: game.name},
+          ...myGames,
+        ]))
+      } else {
+        // game was deleted, so remove from user's games
+        const deletePath = `${path}/${gameKey}`
+        yield call(reduxSagaFirebase.database.delete, deletePath)
+      }
     }
   } else {
     yield call(sagas.closeMyGames)
