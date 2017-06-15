@@ -234,7 +234,7 @@ describe('watchMyGames saga', () => {
     expect(nextValue.CALL.args[1]).toEqual('child_added')
   })
 
-  const channel = firebaseSagaHelper.channel(path, 'child_added', true,
+  const channel = firebaseSagaHelper.channel(path, 'child_added',
     buffers.expanding())
 
   it('waits for channel event', () => {

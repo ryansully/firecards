@@ -52,10 +52,20 @@ describe('channel(pathOrRef, event, buffer, snapshot)', () => {
     expect(ref.on.mock.calls[0][0]).toBe('value')
   })
 
+  it('unsubscribes when the channel is closed', () => {
+    const path = 'path'
+    const event = 'event'
+    const channel = dbModule.channel.call(context, path, event)
+    channel.close()
+
+    expect(ref.off.mock.calls.length).toBe(1)
+    expect(ref.off.mock.calls[0][0]).toBe(event)
+  })
+
   it('emits snapshot data', () => {
     const dataMock = 'snapshot data'
     const val = jest.fn(() => dataMock)
-    const dataSnapshot = { val }
+    const snapshot = { val }
     const subs = []
     ref.on = jest.fn((eventType, callback) => {
       subs.push({eventType, callback})
@@ -69,44 +79,13 @@ describe('channel(pathOrRef, event, buffer, snapshot)', () => {
     const event = 'event'
     const channel = dbModule.channel.call(context, path, event)
 
-    const spy = ({ data }) => {
-      expect(data).toEqual(dataMock)
-    }
-    channel.take(spy)
-    emit(dataSnapshot)
-  })
-
-  it('emits snapshot', () => {
-    const dataMock = 'snapshot data'
-    const val = jest.fn(() => dataMock)
-    const dataSnapshot = { val }
-    const subs = []
-    ref.on = jest.fn((eventType, callback) => {
-      subs.push({ eventType, callback })
-    })
-    const emit = (snapshot) => {
-      subs.forEach(({ callback }) => {
-        callback(snapshot)
+    const spy = (data) => {
+      expect(data).toEqual({
+        snapshot,
+        value: dataMock
       })
     }
-    const path = 'path'
-    const event = 'event'
-    const channel = dbModule.channel.call(context, path, event, true)
-
-    const spy = ({ snapshot }) => {
-      expect(snapshot).toEqual(dataSnapshot)
-    }
     channel.take(spy)
-    emit(dataSnapshot)
-  })
-
-  it('unsubscribes when the channel is closed', () => {
-    const path = 'path'
-    const event = 'event'
-    const channel = dbModule.channel.call(context, path, event)
-    channel.close()
-
-    expect(ref.off.mock.calls.length).toBe(1)
-    expect(ref.off.mock.calls[0][0]).toBe(event)
+    emit(snapshot)
   })
 })
