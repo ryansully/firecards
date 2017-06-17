@@ -95,8 +95,11 @@ export function* watchMyGames(action) {
   const { authUser } = action
   if (authUser) {
     const path = `users/${authUser.uid}/games`
-    channels.myGames = yield call(firebaseSagaHelper.channel, path,
-      'child_added', buffers.expanding())
+    const myGamesRef = firebase.database().ref(path)
+      .orderByChild('lastPlayedAt')
+    const buffer = buffers.expanding()
+    channels.myGames = yield call(firebaseSagaHelper.channel, myGamesRef,
+      'child_added', buffer)
 
     while (true) {
       const { snapshot } = yield take(channels.myGames)

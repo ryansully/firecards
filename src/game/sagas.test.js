@@ -219,23 +219,24 @@ describe('watchMyGames saga', () => {
   const action = {authUser}
   const data = {}
   data.gen = cloneableGenerator(sagas.watchMyGames)(action)
-  data.noAuthUser = sagas.watchMyGames({authUser: null})
-
-  const path = `users/${authUser.uid}/games`
 
   it('calls sagas.closeMyGames if there is no auth user', () => {
+    data.noAuthUser = sagas.watchMyGames({authUser: null})
     expect(data.noAuthUser.next().value).toEqual(call(sagas.closeMyGames))
   })
+
+  const path = `users/${authUser.uid}/games`
+  const myGamesRef = {on: jest.fn()}
+  const buffer = buffers.expanding()
 
   it('calls custom channel', () => {
     const nextValue = data.gen.next().value
     expect(nextValue.CALL.fn).toEqual(firebaseSagaHelper.channel)
-    expect(nextValue.CALL.args[0]).toEqual(path)
-    expect(nextValue.CALL.args[1]).toEqual('child_added')
+    expect(myGamesRef.on.mock.calls.length).toEqual(1)
+    expect(myGamesRef.on.mock.calls[0][0]).toEqual('child_added')
   })
 
-  const channel = firebaseSagaHelper.channel(path, 'child_added',
-    buffers.expanding())
+  const channel = firebaseSagaHelper.channel(myGamesRef, 'child_added', buffer)
 
   it('waits for channel event', () => {
     expect(data.gen.next(channel).value).toEqual(take(channel))
