@@ -1,6 +1,5 @@
-import { buffers } from 'redux-saga'
 import { all, call, put, select, take, takeEvery } from 'redux-saga/effects'
-import firebase, { reduxSagaFirebase, firebaseSagaHelper } from '../firebase'
+import firebase, { reduxSagaFirebase } from '../firebase'
 import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
 
@@ -95,27 +94,26 @@ export function* watchMyGames(action) {
   const { authUser } = action
   if (authUser) {
     const path = `users/${authUser.uid}/games`
-    const myGamesRef = firebase.database().ref(path)
-      .orderByChild('lastPlayedAt')
-    const buffer = buffers.expanding()
-    channels.myGames = yield call(firebaseSagaHelper.channel, myGamesRef,
-      'child_added', buffer)
+    channels.myGames = yield call(reduxSagaFirebase.database.channel, path)
 
     while (true) {
-      const { snapshot } = yield take(channels.myGames)
-      const gameKey = snapshot.key
-      const game = yield call(sagas.getGame, gameKey)
-      if (game) {
-        const myGames = yield select(selectors.getMyGames)
-        yield put(actions.syncMyGames([
-          {gameKey, name: game.name},
-          ...myGames,
-        ]))
-      } else {
-        // game was deleted, so remove from user's games
-        const deletePath = `${path}/${gameKey}`
-        yield call(reduxSagaFirebase.database.delete, deletePath)
+      const { value } = yield take(channels.myGames)
+      const myGames = []
+      for (const gameKey in value) {
+        const game = yield call(sagas.getGame, gameKey)
+        if (game) {
+          myGames.push({
+            gameKey,
+            name: game.name,
+            lastPlayedAt: value[gameKey].lastPlayedAt,
+          })
+        } else {
+          // game was deleted, so remove from user's games
+          const deletePath = `${path}/${gameKey}`
+          yield call(reduxSagaFirebase.database.delete, deletePath)
+        }
       }
+      yield put(actions.syncMyGames(myGames))
     }
   } else {
     yield call(sagas.closeMyGames)

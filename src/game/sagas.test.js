@@ -226,27 +226,24 @@ describe('watchMyGames saga', () => {
   })
 
   const path = `users/${authUser.uid}/games`
-  const myGamesRef = {on: jest.fn()}
-  const buffer = buffers.expanding()
 
-  it('calls custom channel', () => {
-    const nextValue = data.gen.next().value
-    expect(nextValue.CALL.fn).toEqual(firebaseSagaHelper.channel)
-    expect(myGamesRef.on.mock.calls.length).toEqual(1)
-    expect(myGamesRef.on.mock.calls[0][0]).toEqual('child_added')
+  it('calls reduxSagaFirebase.database.channel', () => {
+    expect(data.gen.next().value)
+      .toEqual(call(reduxSagaFirebase.database.channel, path))
   })
 
-  const channel = firebaseSagaHelper.channel(myGamesRef, 'child_added', buffer)
+  const channel = reduxSagaFirebase.database.channel(path)
 
   it('waits for channel event', () => {
     expect(data.gen.next(channel).value).toEqual(take(channel))
   })
 
   const gameKey = 'game_key'
-  const snapshot = {key: gameKey}
+  const lastPlayedAt = 1234567890
+  const value = {[gameKey]: {lastPlayedAt}}
 
   it('calls getGame saga to get game by gameKey', () => {
-    expect(data.gen.next({snapshot}).value)
+    expect(data.gen.next({value}).value)
       .toEqual(call(sagas.getGame, gameKey))
   })
 
@@ -259,17 +256,11 @@ describe('watchMyGames saga', () => {
       .toEqual(call(reduxSagaFirebase.database.delete, deletePath))
   })
 
-  it('selects my games from state', () => {
-    expect(data.gen.next(game).value).toEqual(select(selectors.getMyGames))
-  })
-
-  const myGames = []
+  const myGames = [{gameKey, lastPlayedAt, name: game.name}]
 
   it('dispatches an action to sync myGames', () => {
-    expect(data.gen.next(myGames).value).toEqual(put(actions.syncMyGames([
-      {gameKey, name: game.name},
-      ...myGames,
-    ])))
+    expect(data.gen.next(game).value)
+      .toEqual(put(actions.syncMyGames(myGames)))
   })
 })
 
