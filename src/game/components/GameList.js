@@ -8,11 +8,11 @@ const GameList = ({ headerAs = 'h3', headerText, games = [] }) => {
     <div>
       <Header as={headerAs} content={headerText} />
       {!!games.length && (
-        <List divided relaxed="very">
+        <List divided relaxed="very" selection>
           {games.map((game) => (
-            <List.Item key={game.gameKey}>
+            <List.Item key={game.gameKey} as={Link} to={`/game/${game.gameKey}`}>
               <List.Content>
-                <List.Header as={Link} to={`/game/${game.gameKey}`} content={game.name} />
+                <List.Header content={game.name} />
                 <List.Description content={`Last played ${distanceInWordsToNow(game.lastPlayedAt)} ago`} />
               </List.Content>
             </List.Item>
