@@ -89,6 +89,17 @@ it('selects my games from state', () => {
   expect(selectors.getMyGames({game: initialState})).toEqual([])
 })
 
+it('selects my games from state sorted by last played game descending', () => {
+  const myGames = [{lastPlayedAt: 1}, {lastPlayedAt: 2}]
+  const game = {myGames}
+
+  expect(selectors.getMyGamesSortedByLastPlayedDesc({game}))
+    .toEqual([{lastPlayedAt: 2}, {lastPlayedAt: 1}])
+
+  // selector should not mutate state
+  expect(myGames).toEqual([{lastPlayedAt: 1}, {lastPlayedAt: 2}])
+})
+
 it('returns the initial state', () => {
   expect(reducer(undefined, {})).toEqual(initialState)
 })

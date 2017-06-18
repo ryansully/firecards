@@ -5,7 +5,7 @@ import { GameList } from '../components'
 import { withGames } from '../game/components'
 import { withCurrentUser } from '../user/components'
 
-export const Dashboard = ({ currentUser, myGames }) => {
+export const Dashboard = ({ currentUser, myLastPlayedGames }) => {
   const canCreateGame = currentUser && (currentUser.isAdmin || currentUser.isGuest)
   return (
     <div className="Dashboard">
@@ -13,8 +13,8 @@ export const Dashboard = ({ currentUser, myGames }) => {
       {canCreateGame &&
         <Button as={Link} to="/game/new" icon="add" content="New Game" />
       }
-      <Segment loading={!myGames}>
-        <GameList headerText="My Games" games={myGames} />
+      <Segment loading={!myLastPlayedGames}>
+        <GameList headerText="My Games" games={myLastPlayedGames} />
       </Segment>
     </div>
   )

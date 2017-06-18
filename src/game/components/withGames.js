@@ -26,6 +26,7 @@ const withGames = (WrappedComponent) => {
   const mapStateToProps = (state) => ({
     authUser: authSelectors.getAuthUser(state),
     myGames: gameSelectors.getMyGames(state),
+    myLastPlayedGames: gameSelectors.getMyGamesSortedByLastPlayedDesc(state),
   })
 
   const mapDispatchToProps = (dispatch) => ({

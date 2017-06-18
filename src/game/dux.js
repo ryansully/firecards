@@ -27,6 +27,10 @@ export const selectors = {
   getCurrentGameError: (state) => state.game.currentGameError,
   getGameCreateError: (state) => state.game.gameCreateError,
   getMyGames: (state) => state.game.myGames,
+  getMyGamesSortedByLastPlayedDesc: (state) => {
+    // TODO: memoize this?
+    return [...state.game.myGames].sort((a, b) => b.lastPlayedAt - a.lastPlayedAt)
+  },
 }
 
 export const initialState = {
