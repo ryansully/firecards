@@ -1,25 +1,5 @@
 const functions = require('firebase-functions')
 
-const setGameToUser = functions.database.ref('/games/{game_key}')
-  .onWrite((event) => {
-    const gameKey = event.params.game_key
-    const game = event.data.val() || event.data.previous.val()
-    const uid = game.host
-    const value = event.data.exists() || null
-
-    return getUser(event, uid)
-      .then((snapshot) => {
-        // exit if user is not in database
-        if (!snapshot.exists()) { return }
-
-        // exit if game is already set to user and game is not deleted
-        if (snapshot.hasChild('games/' + gameKey) && value) { return }
-
-        console.log('USER GAME SET', uid, game)
-        return snapshot.ref.child('games').update({[gameKey]: value})
-      })
-  })
-
 const setUserAsAdmin = getUserFunction('admins', 'isAdmin', 'USER ADMIN SET')
 const setUserAsGuest = getUserFunction('guests', 'isGuest', 'USER GUEST SET')
 
@@ -46,7 +26,6 @@ function getUserFunction(path, value, logMessage) {
 }
 
 module.exports = {
-  setGameToUser,
   setUserAsAdmin,
   setUserAsGuest,
 }
