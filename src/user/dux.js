@@ -8,6 +8,7 @@ export const actions = {
 
 export const selectors = {
   getCurrentUser: (state) => state.user.currentUser,
+  getUserGames: (state) => state.user.currentUser.games,
   isUserAdmin: (state) => state.user.currentUser.isAdmin,
   isUserGuest: (state) => state.user.currentUser.isGuest,
 }

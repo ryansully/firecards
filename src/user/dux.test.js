@@ -17,6 +17,12 @@ it('selects user from state', () => {
   expect(selectors.getCurrentUser({ user: {currentUser} })).toEqual(currentUser)
 })
 
+it('selects user games from state', () => {
+  const games = {'game_key': {lastPlayedAt: 1}}
+  currentUser.games = games
+  expect(selectors.getUserGames({user: {currentUser}})).toEqual(games)
+})
+
 it('selects user admin status from state', () => {
   expect(selectors.isUserAdmin({user: {currentUser}})).toEqual(true)
 })
