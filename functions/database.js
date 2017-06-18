@@ -1,5 +1,22 @@
 const functions = require('firebase-functions')
 
+const setPlayerToGame = functions.database.ref('/users/{uid}/games/{game_key}')
+  .onWrite((event) => {
+    const uid = event.params.uid
+    const gameKey = event.params.game_key
+    const value = event.data.exists() ? event.data.val() : null
+
+    const gamePlayersPath = `games/${gameKey}/players`
+    return event.data.ref.root.child(gamePlayersPath).once('value')
+      .then((snapshot) => {
+        if (snapshot.child(uid).exists() && value) {
+          snapshot.child(uid).ref.update(value)
+        } else {
+          return snapshot.ref.update({[uid]: value})
+        }
+      })
+  })
+
 const setUserAsAdmin = getUserFunction('admins', 'isAdmin', 'USER ADMIN SET')
 const setUserAsGuest = getUserFunction('guests', 'isGuest', 'USER GUEST SET')
 
@@ -26,6 +43,7 @@ function getUserFunction(path, value, logMessage) {
 }
 
 module.exports = {
+  setPlayerToGame,
   setUserAsAdmin,
   setUserAsGuest,
 }
