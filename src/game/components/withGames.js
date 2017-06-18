@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { actions as gameActions, selectors as gameSelectors } from '../dux'
-import { selectors as authSelectors } from '../../auth/dux'
+import { withCurrentUser } from '../../user/components'
 
 const withGames = (WrappedComponent) => {
   const wrappedComponentName = WrappedComponent.displayName
@@ -12,9 +12,16 @@ const withGames = (WrappedComponent) => {
   class WithGames extends Component {
     static displayName = `withGames(${wrappedComponentName})`
 
+    componentWillReceiveProps(nextProps) {
+      /* istanbul ignore next */ // TODO: how the hell do I test this??
+      if (!this.props.myGames.length && nextProps.currentUser !== this.props.currentUser) {
+        this.props.loadMyGames(nextProps.currentUser)
+      }
+    }
+
     componentDidMount() {
-      if (!this.props.myGames.length && this.props.authUser) {
-        this.props.loadMyGames(this.props.authUser)
+      if (!this.props.myGames.length && this.props.currentUser) {
+        this.props.loadMyGames(this.props.currentUser)
       }
     }
 
@@ -24,7 +31,6 @@ const withGames = (WrappedComponent) => {
   }
 
   const mapStateToProps = (state) => ({
-    authUser: authSelectors.getAuthUser(state),
     myGames: gameSelectors.getMyGames(state),
     myLastPlayedGames: gameSelectors.getMyGamesSortedByLastPlayedDesc(state),
   })
@@ -33,7 +39,7 @@ const withGames = (WrappedComponent) => {
     ...bindActionCreators(gameActions, dispatch),
   })
 
-  return connect(mapStateToProps, mapDispatchToProps)(WithGames)
+  return withCurrentUser(connect(mapStateToProps, mapDispatchToProps)(WithGames))
 }
 
 export default withGames

@@ -2,6 +2,7 @@ import { all, call, put, select, take, takeEvery } from 'redux-saga/effects'
 import firebase, { reduxSagaFirebase } from '../firebase'
 import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
+import { selectors as userSelectors } from '../user/dux'
 
 export const channels = {
   currentGame: null,
@@ -71,6 +72,40 @@ export function* loadCurrentGame(action) {
   }
 }
 
+export function* loadMyGames() {
+  let [...myGames] = yield select(selectors.getMyGames)
+
+  // exit if already loaded
+  if (myGames.length) { return }
+
+  const userGames = yield select(userSelectors.getUserGames)
+
+  // sync My Games to state
+  yield call(sagas.mapUserGamesToMyGames, userGames)
+  yield call(sagas.watchMyGames)
+}
+
+export function* mapUserGamesToMyGames(userGames) {
+  const authUser = yield select(authSelectors.getAuthUser)
+  const myGames = []
+
+  for (const gameKey in userGames) {
+    const game = yield call(sagas.getGame, gameKey)
+    if (game) {
+      myGames.push({
+        gameKey,
+        name: game.name,
+        lastPlayedAt: userGames[gameKey].lastPlayedAt,
+      })
+    } else if (authUser) {
+      // game was deleted, so remove from user's games
+      const deletePath = `users/${authUser.uid}/games/${gameKey}`
+      yield call(reduxSagaFirebase.database.delete, deletePath)
+    }
+  }
+  yield put(actions.syncMyGames(myGames))
+}
+
 export function* updateLastPlayed(action) {
   const path = `users/${action.authUid}/games/${action.gameKey}`
   return yield call(reduxSagaFirebase.database.update, path, {
@@ -90,30 +125,15 @@ export function* watchCurrentGame(action) {
   }
 }
 
-export function* watchMyGames(action) {
-  const { authUser } = action
+export function* watchMyGames() {
+  const authUser = yield select(authSelectors.getAuthUser)
   if (authUser) {
     const path = `users/${authUser.uid}/games`
     channels.myGames = yield call(reduxSagaFirebase.database.channel, path)
 
     while (true) {
       const { value } = yield take(channels.myGames)
-      const myGames = []
-      for (const gameKey in value) {
-        const game = yield call(sagas.getGame, gameKey)
-        if (game) {
-          myGames.push({
-            gameKey,
-            name: game.name,
-            lastPlayedAt: value[gameKey].lastPlayedAt,
-          })
-        } else {
-          // game was deleted, so remove from user's games
-          const deletePath = `${path}/${gameKey}`
-          yield call(reduxSagaFirebase.database.delete, deletePath)
-        }
-      }
-      yield put(actions.syncMyGames(myGames))
+      yield call(sagas.mapUserGamesToMyGames, value)
     }
   } else {
     yield call(sagas.closeMyGames)
@@ -126,6 +146,8 @@ export const sagas = {
   createGame,
   getGame,
   loadCurrentGame,
+  loadMyGames,
+  mapUserGamesToMyGames,
   updateLastPlayed,
   watchCurrentGame,
   watchMyGames,
@@ -137,6 +159,6 @@ export default function* root() {
     takeEvery(ActionTypes.GAME_CREATE_REQUEST, sagas.createGame),
     takeEvery(ActionTypes.GAME_CREATE_SUCCESS, sagas.watchCurrentGame),
     takeEvery(ActionTypes.LAST_PLAYED_UPDATE, sagas.updateLastPlayed),
-    takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.watchMyGames),
+    takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.loadMyGames),
   ])
 }

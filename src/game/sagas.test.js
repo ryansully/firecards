@@ -1,10 +1,10 @@
-import { buffers } from 'redux-saga'
 import { all, call, put, select, take, takeEvery } from 'redux-saga/effects'
 import { cloneableGenerator } from 'redux-saga/utils'
-import firebase, { reduxSagaFirebase, firebaseSagaHelper } from '../firebase'
+import firebase, { reduxSagaFirebase } from '../firebase'
 import root, { sagas, channels } from './sagas'
 import { actions, ActionTypes, selectors } from './dux'
 import { selectors as authSelectors } from '../auth/dux'
+import { selectors as userSelectors } from '../user/dux'
 
 describe('closeCurrentGame saga', () => {
   const data = {}
@@ -174,6 +174,80 @@ describe('loadCurrentGame saga', () => {
   })
 })
 
+describe('loadMyGames saga', () => {
+  const data = {}
+  data.gen = cloneableGenerator(sagas.loadMyGames)()
+
+  it('selects My Games from state', () => {
+    expect(data.gen.next().value).toEqual(select(selectors.getMyGames))
+  })
+
+  it('exits if My Games has already been loaded', () => {
+    data.gamesExist = data.gen.clone()
+    expect(data.gamesExist.next(['game'])).toEqual({
+      value: undefined,
+      done: true
+    })
+  })
+
+  it('selects user games from state', () => {
+    expect(data.gen.next([]).value).toEqual(select(userSelectors.getUserGames))
+  })
+
+  const userGames = {'game_key': {lastPlayedAt: 1}}
+
+  it('calls mapUserGamesToMyGames saga', () => {
+    expect(data.gen.next(userGames).value)
+      .toEqual(call(sagas.mapUserGamesToMyGames, userGames))
+  })
+
+  it('calls watchMyGames saga', () => {
+    expect(data.gen.next().value).toEqual(call(sagas.watchMyGames))
+  })
+})
+
+describe('mapUserGamesToMyGames saga', () => {
+  const gameKey = 'game_key'
+  const lastPlayedAt = 1
+  const userGames = {[gameKey]: {lastPlayedAt}}
+  const data = {}
+  data.gen = cloneableGenerator(sagas.mapUserGamesToMyGames)(userGames)
+
+  it('selects auth user from state', () => {
+    expect(data.gen.next().value).toEqual(select(authSelectors.getAuthUser))
+  })
+
+  const authUser = {uid: 'uid'}
+
+  it('calls getGame saga to get game by gameKey', () => {
+    data.noAuthUser = data.gen.clone()
+    expect(data.gen.next(authUser).value)
+      .toEqual(call(sagas.getGame, gameKey))
+    expect(data.noAuthUser.next(null).value)
+      .toEqual(call(sagas.getGame, gameKey))
+  })
+
+  const game = {name: 'test'}
+
+  it('deletes game index from user if there is no game', () => {
+    data.noGame = data.gen.clone()
+    data.noGameOrAuthUser = data.noAuthUser.clone()
+
+    const deletePath = `users/${authUser.uid}/games/${gameKey}`
+    expect(data.noGame.next().value)
+      .toEqual(call(reduxSagaFirebase.database.delete, deletePath))
+  })
+
+  const myGames = [{gameKey, lastPlayedAt, name: game.name}]
+
+  it('dispatches an action to sync myGames', () => {
+    expect(data.gen.next(game).value)
+      .toEqual(put(actions.syncMyGames(myGames)))
+    expect(data.noGameOrAuthUser.next(null).value)
+      .toEqual(put(actions.syncMyGames([])))
+  })
+})
+
 describe('updateLastPlayed saga', () => {
   const action = {
     authUid: 'uid',
@@ -215,20 +289,24 @@ describe('watchCurrentGame saga', () => {
 })
 
 describe('watchMyGames saga', () => {
-  const authUser = {uid: 'uid'}
-  const action = {authUser}
   const data = {}
-  data.gen = cloneableGenerator(sagas.watchMyGames)(action)
+  data.gen = cloneableGenerator(sagas.watchMyGames)()
+
+  it('selects auth user from state', () => {
+    expect(data.gen.next().value).toEqual(select(authSelectors.getAuthUser))
+  })
+
+  const authUser = {uid: 'uid'}
 
   it('calls sagas.closeMyGames if there is no auth user', () => {
-    data.noAuthUser = sagas.watchMyGames({authUser: null})
-    expect(data.noAuthUser.next().value).toEqual(call(sagas.closeMyGames))
+    data.noAuthUser = data.gen.clone()
+    expect(data.noAuthUser.next(null).value).toEqual(call(sagas.closeMyGames))
   })
 
   const path = `users/${authUser.uid}/games`
 
   it('calls reduxSagaFirebase.database.channel', () => {
-    expect(data.gen.next().value)
+    expect(data.gen.next(authUser).value)
       .toEqual(call(reduxSagaFirebase.database.channel, path))
   })
 
@@ -242,25 +320,9 @@ describe('watchMyGames saga', () => {
   const lastPlayedAt = 1234567890
   const value = {[gameKey]: {lastPlayedAt}}
 
-  it('calls getGame saga to get game by gameKey', () => {
-    expect(data.gen.next({value}).value)
-      .toEqual(call(sagas.getGame, gameKey))
-  })
-
-  const game = {name: 'test'}
-
-  it('deletes game index from user if there is no game', () => {
-    data.noGame = data.gen.clone()
-    const deletePath = `${path}/${gameKey}`
-    expect(data.noGame.next(null).value)
-      .toEqual(call(reduxSagaFirebase.database.delete, deletePath))
-  })
-
-  const myGames = [{gameKey, lastPlayedAt, name: game.name}]
-
-  it('dispatches an action to sync myGames', () => {
-    expect(data.gen.next(game).value)
-      .toEqual(put(actions.syncMyGames(myGames)))
+  it('calls mapUserGamesToMyGames saga', () => {
+    expect(data.gen.next({ value }).value)
+      .toEqual(call(sagas.mapUserGamesToMyGames, value))
   })
 })
 
@@ -273,7 +335,7 @@ describe('root saga', () => {
       takeEvery(ActionTypes.GAME_CREATE_REQUEST, sagas.createGame),
       takeEvery(ActionTypes.GAME_CREATE_SUCCESS, sagas.watchCurrentGame),
       takeEvery(ActionTypes.LAST_PLAYED_UPDATE, sagas.updateLastPlayed),
-      takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.watchMyGames),
+      takeEvery(ActionTypes.MY_GAMES_LOAD, sagas.loadMyGames),
   ]))
   })
 })

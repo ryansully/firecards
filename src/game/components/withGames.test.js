@@ -1,4 +1,5 @@
 import React from 'react'
+import ShallowRenderer from 'react-test-renderer/shallow'
 import { Provider } from 'react-redux'
 import configureStore from 'redux-mock-store'
 import { shallow, mount } from 'enzyme'
@@ -9,7 +10,7 @@ const mockStore = configureStore()
 let store
 
 const state = {
-  auth: {authUser: null},
+  user: {currentUser: null},
   game: initialState,
 }
 
@@ -23,7 +24,7 @@ it('renders without crashing', () => {
 
 it('renders a wrapped component with props', () => {
   const PropsChecker = withGames((props) => {
-    expect(props.authUser).toEqual(null)
+    expect(props.currentUser).toEqual(null)
     expect(props.myGames).toEqual([])
     return null
   })
@@ -36,10 +37,10 @@ it('renders a wrapped component with props', () => {
 })
 
 it('dispatches an action to load my games', () => {
-  const authUser = {uid: 'uid'}
+  const currentUser = {games: {}}
   store = mockStore({
     ...state,
-    auth: {authUser},
+    user: {currentUser},
   })
   const WrappedComponent = withGames(props => null)
 
@@ -51,7 +52,7 @@ it('dispatches an action to load my games', () => {
 
   const actions = store.getActions()
   expect(actions.length).toEqual(1)
-  expect(actions[0]).toEqual(gameActions.loadMyGames(authUser))
+  expect(actions[0]).toEqual(gameActions.loadMyGames(currentUser))
 })
 
 it('does not dispatch action to load my games when myGames has length', () => {
