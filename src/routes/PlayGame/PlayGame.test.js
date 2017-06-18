@@ -5,8 +5,14 @@ import { PageContainer } from '../../components'
 
 const currentGame = {
   name: 'test name',
-  key: 'game_key',
+  gameKey: 'game_key',
 }
+const authUser = {uid: 'uid'}
+let updateLastPlayed
+
+beforeEach(() => {
+  updateLastPlayed = jest.fn()
+})
 
 it('renders without crashing', () => {
   shallow(<PlayGame />)
@@ -19,15 +25,31 @@ it('uses game name for page title', () => {
 })
 
 it('updates last played timestamp for user game record', () => {
-  const updateLastPlayed = jest.fn()
-  const authUser = {uid: 'uid'}
   const wrapper = shallow(<PlayGame />)
 
   // simulate withCurrentGame HOC connection
   wrapper.setProps({currentGame, updateLastPlayed})
-  expect(updateLastPlayed).not.toBeCalled()
+  expect(updateLastPlayed.mock.calls.length).toEqual(0)
 
   // simulate auth connection
   wrapper.setProps({authUser})
-  expect(updateLastPlayed).toBeCalled()
+  expect(updateLastPlayed.mock.calls.length).toEqual(1)
+  expect(updateLastPlayed.mock.calls[0])
+    .toEqual([authUser.uid, currentGame.gameKey])
+})
+
+it('only updates timestamp once', () => {
+  const wrapper = shallow(<PlayGame />)
+
+  // simulate withCurrentGame HOC connection
+  wrapper.setProps({currentGame, updateLastPlayed})
+  expect(wrapper.state('lastPlayedUpdated')).toEqual(false)
+
+  // simulate auth connection
+  wrapper.setProps({authUser})
+  expect(wrapper.state('lastPlayedUpdated')).toEqual(true)
+
+  // simulate prop change
+  wrapper.setProps({currentGame: {gameKey: 'new_game_key'}})
+  expect(updateLastPlayed.mock.calls.length).toEqual(1)
 })

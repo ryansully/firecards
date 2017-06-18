@@ -1,14 +1,22 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Header } from 'semantic-ui-react'
-import { PageContainer, withCurrentGame } from '../../components'
+import { PageContainer } from '../../components'
+import { withCurrentGame } from '../../game/components'
 import { selectors as authSelectors } from '../../auth/dux'
 
 export class PlayGame extends Component {
+  state = {
+    lastPlayedUpdated: false,
+  }
+
   componentWillReceiveProps(nextProps) {
     const { authUser, currentGame } = nextProps
-    if (authUser && currentGame) {
+
+    // only update last played timestamp on initial load
+    if (authUser && currentGame && !this.state.lastPlayedUpdated) {
       this.props.updateLastPlayed(authUser.uid, currentGame.gameKey)
+      this.setState({lastPlayedUpdated: true})
     }
   }
 
