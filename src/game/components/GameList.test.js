@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import { Link } from 'react-router-dom'
+import { ListItem } from 'semantic-ui-react'
 import GameList from './GameList'
 
 it('renders without crashing', () => {
@@ -12,5 +12,5 @@ it('shows list of games', () => {
     {gameKey: 'game_key', name: 'game name'}
   ]
   const wrapper = shallow(<GameList games={games} />)
-  expect(wrapper.find(Link).length).toEqual(1)
+  expect(wrapper.find(ListItem).length).toEqual(1)
 })
