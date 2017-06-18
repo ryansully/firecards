@@ -11,7 +11,7 @@ export const Dashboard = ({ currentUser, myLastPlayedGames }) => {
     <div className="Dashboard">
       <Header as="h2" icon="game" content="Games" />
       {canCreateGame &&
-        <Button as={Link} to="/game/new" icon="add" content="New Game" />
+        <Button as={Link} to="/game/new" content="New Game" icon="add" labelPosition="left" />
       }
       <Segment loading={!myLastPlayedGames}>
         <GameList headerText="My Games" games={myLastPlayedGames} />
