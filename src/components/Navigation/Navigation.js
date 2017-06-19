@@ -16,8 +16,8 @@ export const Navigation = ({ authUser, signOut }) => {
       <Menu.Menu position="right">
         <Dropdown item trigger={<Image src={authUser.photoURL} avatar />} className="user">
           <Dropdown.Menu>
-            <Dropdown.Header content={authUser.displayName} />
-            <Dropdown.Item onClick={signOut}>Sign Out</Dropdown.Item>
+            <Dropdown.Header content={authUser.displayName} icon="user" />
+            <Dropdown.Item onClick={signOut} content="Sign Out" icon="sign out" />
           </Dropdown.Menu>
         </Dropdown>
       </Menu.Menu>
