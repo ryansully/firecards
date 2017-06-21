@@ -2971,7 +2971,7 @@ firebase@^4.1.2:
     promise-polyfill "^6.0.2"
     xmlhttprequest "^1.8.0"
 
-firebaseui@^2.0.0:
+firebaseui@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/firebaseui/-/firebaseui-2.2.0.tgz#6e2ca07b8a86c228edf4e83401c8ba3391cea6c9"
   dependencies:
